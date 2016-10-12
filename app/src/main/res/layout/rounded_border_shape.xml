@@ -1,0 +1,23 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <shape android:shape="rectangle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <solid android:color="#10ffffff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <corners android:radius="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <stroke
+                android:width="4dp"
+                android:color="@color/colorAppOrange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </shape>
+    </item>
+</selector>

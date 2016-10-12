@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "143028210550",
+    "firebase_url": "https://autok-2fb1f.firebaseio.com",
+    "project_id": "autok-2fb1f",
+    "storage_bucket": "autok-2fb1f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:143028210550:android:fd305ae0f7818759",
+        "android_client_info": {
+          "package_name": "avidos.autok"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "143028210550-bu6min3k9nu3hso45le27lv9bqfblp4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "avidos.autok",
+            "certificate_hash": "0D4460907EE06FE4B041C8A3E374DAC1CF351E9F"
+          }
+        },
+        {
+          "client_id": "143028210550-6tseil2vbgb0oihlheu57ehn7sj1i3c8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABus2jZVhZrHznbhP4yMV60hymHJxOhTc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "143028210550-6tseil2vbgb0oihlheu57ehn7sj1i3c8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
