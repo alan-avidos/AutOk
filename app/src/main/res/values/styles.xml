@@ -18,6 +18,10 @@
         <item name="android:colorControlHighlight">@color/colorAppWhiteText</item>
     </style>
 
-    <style name="TextLabel" parent="Widget.Design.TextInputLayout"/>
+    <style name="TextLabel" parent="Widget.Design.TextInputLayout" />
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
