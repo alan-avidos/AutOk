@@ -3,6 +3,8 @@ package avidos.autok.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -58,7 +62,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TestFairy.begin(this, APP_TOKEN);
+        //TestFairy.begin(this, APP_TOKEN);
+
+        isGooglePlayServicesAvailable(this);
 
         setContentView(R.layout.activity_login);
         // Get shared instance of the FireBaseAuth object.
@@ -98,6 +104,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    LoginActivity.this.startActivity(intent);
                 } else {
                     // User is signed out
                     Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_out");
@@ -218,6 +227,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public boolean isGooglePlayServicesAvailable(Activity activity) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+        if(status != ConnectionResult.SUCCESS) {
+            if(googleApiAvailability.isUserResolvableError(status)) {
+                googleApiAvailability.getErrorDialog(activity, status, 2404).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -226,7 +247,6 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mEmail;
         private final String mPassword;
-        private boolean mSuccess = false;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -247,7 +267,6 @@ public class LoginActivity extends AppCompatActivity {
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
-
                                 Log.w(FIREBASE_AUTH_TAG, "signInWithEmail:failed", task.getException());
 
                                 try {
@@ -261,27 +280,17 @@ public class LoginActivity extends AppCompatActivity {
                                 } catch(Exception e) {
                                     Log.e(FIREBASE_AUTH_TAG, e.getMessage());
                                 }
-                                return;
                             }
-                            mSuccess = true;
                         }
                     });
 
-            return mSuccess;
+            return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                // TODO: Intent to next activity.
-                Toast.makeText(LoginActivity.this, "Auth",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                // do nothing...
-            }
         }
 
         @Override

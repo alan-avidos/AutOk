@@ -13,9 +13,12 @@
         <!-- Customize your theme here. -->
         <item name="colorAccent">@android:color/white</item>
         <item name="android:textColorHint">@color/colorAppOrange</item>
-        <item name="android:colorControlNormal">@color/colorAppWhiteText</item>
-        <item name="android:colorControlActivated">@color/colorAppOrange</item>
-        <item name="android:colorControlHighlight">@color/colorAppWhiteText</item>
+    </style>
+
+    <style name="EditTextHintBlack" parent="Widget.Design.TextInputLayout">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/colorAppGrayText</item>
+        <item name="android:textColorHint">@color/colorAppGrayText</item>
     </style>
 
     <style name="TextLabel" parent="Widget.Design.TextInputLayout" />

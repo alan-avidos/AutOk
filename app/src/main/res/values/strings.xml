@@ -5,6 +5,12 @@
     <string name="prompt_email"><i>Usuario</i></string>
     <string name="prompt_password"><i>Contraseña</i></string>
     <string name="action_sign_in">Ingresar</string>
+    <string name="action_finish">Finalizar</string>
+    <string name="action_update">Actualizar</string>
+    <string name="action_reasign">Reasignar</string>
+    <string name="action_available">Disponibles</string>
+    <string name="action_next">Próximos</string>
+    <string name="action_cancel">Cancelar</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">Este email está en un formato inválido</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
@@ -15,6 +21,7 @@
         completions."
     </string>
     <string name="auth_failed">"Credenciales incorrectas."</string>
+    <string name="reauth">"Por favor vuelva a iniciar sesión."</string>
     <string name="no_account">No tienes cuenta? <u>Regístrate</u>.</string>
     <string name="title_activity_main">MainActivity</string>
 
@@ -22,4 +29,110 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_tab_example">TabExampleActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="title_profile">Perfil</string>
+    <string name="profile_name">Nombre</string>
+    <string name="profile_username">Usuario</string>
+    <string name="profile_password">Contraseña</string>
+    <string name="profile_phone">Teléfono</string>
+    <string name="profile_hint">Ingrese o actualice su %1$s</string>
+
+    <string name="title_select_vehicle">Seleccionar vehiculo</string>
+
+    <string name="title_car_info">%1$s %2$s Placas %3$s</string>
+
+    <string name="title_fuel">Combustible / Odómetro</string>
+
+    <string name="title_new_assignation">Mi asignación</string>
+
+    <string name="title_documentation">Documentación</string>
+
+    <string name="subtitle_vehicle">Vehiculo</string>
+    <string name="subtitle_possession">Datos de posesión</string>
+    <string name="subtitle_assurance">Seguro</string>
+
+    <string name="hint_brand">Marca</string>
+    <string name="hint_subbrand">Sub-Marca</string>
+    <string name="hint_type">Tipo</string>
+    <string name="hint_model">Modelo</string>
+    <string name="hint_color">Color</string>
+    <string name="hint_plate">Placas</string>
+    <string name="hint_user">Usuario</string>
+    <string name="hint_datetime">Fecha y hora</string>
+    <string name="hint_destination">Destino</string>
+    <string name="hint_timeofuse">Tiempo de uso aproximado</string>
+    <string name="hint_assurance">Cia. Aseguradora</string>
+    <string name="hint_policenumber">No. de póliza</string>
+    <string name="hint_expiration">Vencimiento</string>
+    <string name="hint_telephone">Telefono</string>
+
+    <string name="title_exterior">Verificación exterior</string>
+    <string name="exterior_crash">Golpes</string>
+    <string name="exterior_scratch">Rayaduras</string>
+
+    <string name="title_interior">Verificación interior</string>
+    <string name="interior_warning">Tablero sin alarmas</string>
+    <string name="interior_seats">Asientos sin roturas</string>
+    <string name="interior_ac">Aire acondicionado</string>
+    <string name="interior_radio">Radio/Estéreo</string>
+    <string name="interior_mat">Tapetes completos</string>
+
+    <string name="filename_mainpic1">%1$s-pic1</string>
+    <string name="filename_mainpic2">%1$s-pic2</string>
+    <string name="filename_mainpic3">%1$s-pic3</string>
+
+    <string name="filename_frontpic">%1$s_pic1</string>
+    <string name="filename_rearpic">%1$s_pic2</string>
+    <string name="filename_leftpic">%1$s_pic3</string>
+    <string name="filename_rightpic">%1$s_pic4</string>
+    <string name="filename_crashpic">%1$s_crash</string>
+    <string name="filename_scratchpic">%1$s_scratch</string>
+
+    <string name="filename_warning_lights">%1$s_warninglights</string>
+    <string name="filename_seats">%1$s_seats</string>
+    <string name="filename_ac">%1$s_ac</string>
+    <string name="filename_radio">%1$s_radio</string>
+    <string name="filename_mat">%1$s_mat</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="success">Success</string>
+    <string name="rationale_storage">This sample reads images from your camera to demonstrate uploading.</string>
+
+    <string-array name="options_array">
+        <item>Verificación exterior</item>
+        <item>Verificación interiores</item>
+        <item>Combustible / Odómetro</item>
+        <item>Documentación</item>
+    </string-array>
+
+    <string-array name="service_array">
+        <item>Tipo de servicio</item>
+        <item>Externo</item>
+        <item>Local</item>
+    </string-array>
+
+    <string-array name="service_array_en">
+        <item>allowedUse</item>
+        <item>external</item>
+        <item>local</item>
+    </string-array>
+
+    <string-array name="type_array">
+        <item>Tipo de uso</item>
+        <item>Transportes de materiales</item>
+        <item>Personal</item>
+        <item>Transporte de personal</item>
+        <item>Renta</item>
+    </string-array>
+
+    <string-array name="type_array_en">
+        <item>use</item>
+        <item>materialTransport</item>
+        <item>personal</item>
+        <item>personnelTransport</item>
+        <item>rent</item>
+    </string-array>
+
 </resources>

@@ -1,57 +1,75 @@
 package avidos.autok.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import avidos.autok.R;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, ExteriorFragment.OnFragmentInteractionListener,
+        MainFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AssignationFragment.OnFragmentInteractionListener,
+        FuelFragment.OnFragmentInteractionListener {
+
+    // Fragments
+    private MainFragment mMainFragment;
+    private ProfileFragment mProfileFragment;
+    // FireBase references.
+    private FirebaseAuth mAuth;
+    //
+    private boolean isACarAssigned = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+        toolbar.setNavigationOnClickListener(this);
         toggle.syncState();
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mMainFragment = MainFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mMainFragment, "MainFragment").commit();
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return false;
     }
 
     @Override
@@ -82,22 +100,50 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_assignments) {
 
-        } else if (id == R.id.nav_slideshow) {
+            if(isACarAssigned) {
+                AssignationFragment mAssignationFragment = (AssignationFragment) getSupportFragmentManager().findFragmentByTag("AssignationFragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mAssignationFragment, "AssignationFragment").commit();
+            } else {
+                mMainFragment = MainFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mMainFragment, "MainFragment").commit();
+            }
+        } else if (id == R.id.nav_profile) {
 
-        } else if (id == R.id.nav_manage) {
+            mProfileFragment = ProfileFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mProfileFragment, "ProfileFragment").commit();
+        } else if (id == R.id.nav_signout) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            mAuth.signOut();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            MainActivity.this.startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.END);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
+        } else {
+            drawer.openDrawer(GravityCompat.END);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(String fragment) {
+
+        if (fragment.equals("AssignationFragment")) {
+            isACarAssigned = true;
+        } else if (fragment.equals("MainFragment")) {
+            isACarAssigned = false;
+        }
     }
 }

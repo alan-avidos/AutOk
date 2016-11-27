@@ -1,0 +1,42 @@
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="avidos.autok.activity.DocumentationFragment">
+
+    <TextView
+        android:id="@+id/documentation_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="5%"
+        android:textColor="@color/colorAppWhiteText"
+        android:textSize="21sp"
+        android:background="@color/colorAppOrange"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="@string/title_documentation" />
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_below="@+id/documentation_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"/>
+
+    <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/indicator"
+        android:padding="10dip"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        app:radius="6dp"
+        app:fillColor="#FF303030"
+        app:pageColor="#88a5a5a5"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp"
+        />
+
+</android.support.percent.PercentRelativeLayout>

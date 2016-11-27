@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/select_vehicle_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="5%"
+        android:textColor="@color/colorAppWhiteText"
+        android:textSize="21sp"
+        android:background="@color/colorAppOrange"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="@string/title_select_vehicle" />
+
+    <Spinner
+        android:id="@+id/spinner_service"
+        android:layout_below="@id/select_vehicle_title"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        app:layout_marginTopPercent="5%"
+        android:layout_centerHorizontal="true">
+    </Spinner>
+
+    <Spinner
+        android:id="@+id/spinner_type"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        app:layout_marginTopPercent="5%"
+        android:layout_below="@+id/spinner_service"
+        android:layout_centerHorizontal="true">
+    </Spinner>
+
+    <Button
+        android:id="@+id/button_available"
+        android:layout_below="@id/spinner_type"
+        style="?android:textAppearanceSmall"
+        android:background="@drawable/tab_selected"
+        android:textColor="@color/colorAppOrange"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_marginTopPercent="5%"
+        app:layout_marginLeftPercent="10%"
+        app:layout_widthPercent="35%"
+        app:layout_heightPercent="9%"
+        android:text="@string/action_available"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/button_next"
+        style="?android:textAppearanceSmall"
+        android:background="@drawable/tab_unselected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_marginTopPercent="5%"
+        app:layout_marginRightPercent="10%"
+        app:layout_widthPercent="35%"
+        app:layout_heightPercent="9%"
+        android:text="@string/action_next"
+        android:textStyle="bold"
+        android:layout_below="@+id/spinner_type"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_assignments"
+        android:scrollbars="vertical"
+        app:layout_marginLeftPercent="10%"
+        app:layout_marginRightPercent="10%"
+        app:layout_marginTopPercent="5%"
+        android:layout_below="@id/button_available"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</android.support.percent.PercentRelativeLayout>

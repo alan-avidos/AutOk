@@ -1,0 +1,364 @@
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="avidos.autok.activity.InteriorFragment"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/interior_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="5%"
+        android:textColor="@color/colorAppWhiteText"
+        android:textSize="21sp"
+        android:background="@color/colorAppOrange"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="@string/title_interior" />
+
+    <TextView
+        android:id="@+id/car_info_interior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_marginTopPercent="2%"
+        app:layout_heightPercent="7%"
+        android:textColor="@color/colorAppGrayText"
+        android:textSize="21sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_below="@+id/interior_title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/car_image_interior"
+        app:layout_marginTopPercent="2%"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_heightPercent="15%"
+        app:layout_widthPercent="20%"
+        android:src="@drawable/foto"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/car_info_interior"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/car_info_exterior_rating"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_marginTopPercent="2%"
+        app:layout_heightPercent="7%"
+        android:layout_below="@id/car_image_interior"
+        android:textColor="@color/colorAppGrayText"
+        android:text="Limpieza interior"
+        android:textSize="21sp"
+        android:gravity="center"
+        android:textStyle="bold" />
+
+    <com.appyvet.rangebar.RangeBar
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        app:layout_widthPercent="90%"
+        android:layout_below="@+id/car_info_exterior_rating"
+        custom:tickEnd="10"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/ratingBar_interior"
+        custom:rangeBar="false" />
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/warning_light_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="6%"
+        app:layout_marginTopPercent="2%"
+        android:layout_below="@id/ratingBar_interior">
+
+        <TextView
+            android:id="@+id/text_warning_lights"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            android:paddingLeft="30dp"
+            android:paddingStart="30dp"
+            android:paddingRight="30dp"
+            android:textColor="@color/colorAppWhiteText"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/interior_warning"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/car_image_warning_lights"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="10%"
+            app:layout_marginRightPercent="5%"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/foto" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_warning_lights"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="10%"
+            android:layout_toRightOf="@+id/text_warning_lights"
+            android:layout_toEndOf="@+id/text_warning_lights"
+            android:layout_toLeftOf="@+id/car_image_warning_lights"
+            android:layout_toStartOf="@+id/car_image_warning_lights"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:kswTextOff="No"
+            app:kswTextOn="Si"
+            />
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/seats_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="6%"
+        app:layout_marginTopPercent="2%"
+        android:layout_below="@id/warning_light_layout">
+
+        <TextView
+            android:id="@+id/text_scratch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            android:paddingLeft="30dp"
+            android:paddingStart="30dp"
+            android:paddingRight="30dp"
+            android:textColor="@color/colorAppWhiteText"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/interior_seats"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/car_image_seats"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="10%"
+            app:layout_marginRightPercent="5%"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/foto" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_seats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="10%"
+            android:layout_toRightOf="@+id/text_scratch"
+            android:layout_toEndOf="@+id/text_scratch"
+            android:layout_toLeftOf="@+id/car_image_seats"
+            android:layout_toStartOf="@+id/car_image_seats"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:kswTextOff="No"
+            app:kswTextOn="Si"
+            />
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/ac_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="6%"
+        app:layout_marginTopPercent="2%"
+        android:layout_below="@id/seats_layout">
+
+        <TextView
+            android:id="@+id/text_ac"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            android:paddingLeft="30dp"
+            android:paddingStart="30dp"
+            android:paddingRight="30dp"
+            android:textColor="@color/colorAppWhiteText"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/interior_ac"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/car_image_ac"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="10%"
+            app:layout_marginRightPercent="5%"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/foto" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_ac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="10%"
+            android:layout_toRightOf="@+id/text_ac"
+            android:layout_toEndOf="@+id/text_ac"
+            android:layout_toLeftOf="@+id/car_image_ac"
+            android:layout_toStartOf="@+id/car_image_ac"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:kswTextOff="No"
+            app:kswTextOn="Si"
+            />
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/radio_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="6%"
+        app:layout_marginTopPercent="2%"
+        android:layout_below="@id/ac_layout">
+
+        <TextView
+            android:id="@+id/text_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            android:paddingLeft="30dp"
+            android:paddingStart="30dp"
+            android:paddingRight="30dp"
+            android:textColor="@color/colorAppWhiteText"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/interior_radio"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/car_image_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="10%"
+            app:layout_marginRightPercent="5%"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/foto" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="10%"
+            android:layout_toRightOf="@+id/text_radio"
+            android:layout_toEndOf="@+id/text_radio"
+            android:layout_toLeftOf="@+id/car_image_radio"
+            android:layout_toStartOf="@+id/car_image_radio"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:kswTextOff="No"
+            app:kswTextOn="Si"
+            />
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/mat_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="6%"
+        app:layout_marginTopPercent="2%"
+        android:layout_below="@+id/radio_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp">
+
+        <TextView
+            android:id="@+id/text_mat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            android:paddingLeft="30dp"
+            android:paddingStart="30dp"
+            android:paddingRight="30dp"
+            android:textColor="@color/colorAppWhiteText"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:text="@string/interior_mat"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/car_image_mat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="10%"
+            app:layout_marginRightPercent="5%"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/foto" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_mat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="10%"
+            android:layout_toRightOf="@+id/text_mat"
+            android:layout_toEndOf="@+id/text_mat"
+            android:layout_toLeftOf="@+id/car_image_mat"
+            android:layout_toStartOf="@+id/car_image_mat"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:kswTextOff="No"
+            app:kswTextOn="Si"
+            />
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_interior_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:backgroundTint="@color/bpRed"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/ic_done_white_24dp" />
+
+</android.support.percent.PercentRelativeLayout>
