@@ -1,10 +1,12 @@
 package avidos.autok.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Alan on 27/11/2016.
  */
 
-public class Use {
+public class Use implements Serializable {
 
     public Boolean materialTransport;
     public Boolean personal;

@@ -170,6 +170,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 mListener.onFragmentInteraction("AssignationFragment");
                 final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 assignationFragment = AssignationFragment.newInstance(carsList.get(position), mUserData, mAssignment);
+                carsList.clear();
+                mAdapter.notifyDataSetChanged();
                 fragmentTransaction.replace(R.id.content_main, assignationFragment, "AssignationFragment");
                 fragmentTransaction.addToBackStack("AssignationFragment");
                 fragmentTransaction.commit();
