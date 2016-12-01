@@ -32,9 +32,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -151,7 +149,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.update_button:
-                        updateUser(user.adminUid, user.bloodType, user.company, user.job, user.name, user.password, mPhoneView.getText().toString(), user.email);
+                        updateUser(user.adminUid, user.bloodType, user.company, user.job, user.name, user.password, mPhoneView.getText().toString(), user.email, user.assignation);
                         break;
                     case R.id.cancel_button:
                         mPhoneView.setText(user.telephone);
@@ -227,10 +225,10 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    public void updateUser (String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email) {
+    public void updateUser (String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email, String assignation) {
 
         mUpdateDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(this.adminUid);
-        User userValues = new User(adminUid, bloodType, company, job, name, password, telephone, email);
+        User userValues = new User(adminUid, bloodType, company, job, name, password, telephone, email, assignation);
         Map<String, Object> userMap = userValues.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

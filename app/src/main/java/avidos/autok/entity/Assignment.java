@@ -18,6 +18,7 @@ public class Assignment implements Serializable{
     public String use;
     public String type;
     public String userName;
+    public String destination;
     public Double fuelLevel;
     public Long mileage;
 
@@ -25,13 +26,14 @@ public class Assignment implements Serializable{
         // Default constructor required for calls to DataSnapshot.getValue(Assignment.class)
     }
 
-    public Assignment(Long end, Long start, String uid, String use, String type, String userName, Double fuelLevel, Long mileage) {
+    public Assignment(Long end, Long start, String uid, String use, String type, String userName, String destination, Double fuelLevel, Long mileage) {
         this.end = end;
         this.start = start;
         this.uid = uid;
         this.use = use;
         this.type = type;
         this.userName = userName;
+        this.destination = destination;
         this.fuelLevel = fuelLevel;
         this.mileage = mileage;
     }
@@ -46,7 +48,9 @@ public class Assignment implements Serializable{
         result.put("use", use);
         result.put("type", type);
         result.put("userName", userName);
+        result.put("destination", destination);
         result.put("fuelLevel", fuelLevel);
+        result.put("mileage", mileage);
 
         return result;
     }

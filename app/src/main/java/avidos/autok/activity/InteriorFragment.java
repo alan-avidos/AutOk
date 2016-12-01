@@ -43,7 +43,6 @@ import avidos.autok.R;
 import avidos.autok.entity.AC;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
-import avidos.autok.entity.Exterior;
 import avidos.autok.entity.Interior;
 import avidos.autok.entity.Mat;
 import avidos.autok.entity.Radio;
@@ -311,19 +310,19 @@ public class InteriorFragment extends Fragment {
                 Picasso.with(getContext()).load(downloadPath).noFade().into(mWarningLightsImage);
                 break;
             case "seats":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mSeatsImage);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mSeatsImage);
                 break;
             case "ac":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mACImage);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mACImage);
                 break;
             case "radio":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mRadioImage);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRadioImage);
                 break;
             case "mat":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mMatImage);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mMatImage);
                 break;
             case "car":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mCarImage);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mCarImage);
                 break;
         }
     }

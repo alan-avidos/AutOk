@@ -10,123 +10,243 @@
         android:id="@+id/vehicle_subtitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_marginTopPercent="5%"
-        app:layout_heightPercent="5%"
+        app:layout_marginTopPercent="1%"
+        app:layout_heightPercent="6%"
         android:textColor="@color/colorAppGrayText"
-        android:textSize="21sp"
+        android:textSize="28sp"
         android:gravity="center"
         android:textStyle="bold"
         android:text="@string/subtitle_vehicle" />
 
-    <EditText
-        android:id="@+id/edittext_brand"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_brand"
         android:layout_below="@+id/vehicle_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        app:layout_marginTopPercent="5%"
-        android:textSize="14sp"
-        android:hint="@string/hint_brand"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_subbrand"
-        android:layout_below="@+id/edittext_brand"
+        <EditText
+            android:id="@+id/edittext_brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            app:layout_marginTopPercent="5%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:hint="@string/hint_brand"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_subbrand"
+        android:layout_below="@+id/layout_brand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_subbrand"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_type"
-        android:layout_below="@+id/edittext_subbrand"
+
+        <EditText
+            android:id="@+id/edittext_subbrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_subbrand"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_type"
+        android:layout_below="@+id/layout_subbrand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_type"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_model"
-        android:layout_below="@+id/edittext_type"
+
+        <EditText
+            android:id="@+id/edittext_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_type"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_model"
+        android:layout_below="@+id/layout_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_model"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_color"
-        android:layout_below="@+id/edittext_model"
+        <EditText
+            android:id="@+id/edittext_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_model"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_color"
+        android:layout_below="@+id/layout_model"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_color"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_plate"
-        android:layout_below="@+id/edittext_color"
+        <EditText
+            android:id="@+id/edittext_color"
+            android:layout_below="@+id/layout_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_color"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_plate"
+        android:layout_below="@+id/layout_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_plate"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
+
+        <EditText
+            android:id="@+id/edittext_plate"
+            android:layout_below="@+id/layout_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_plate"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <TextView
         android:id="@+id/possession_subtitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/edittext_plate"
+        android:layout_below="@+id/layout_plate"
         app:layout_marginTopPercent="5%"
-        app:layout_heightPercent="5%"
+        app:layout_heightPercent="6%"
         android:textColor="@color/colorAppGrayText"
-        android:textSize="21sp"
+        android:textSize="28sp"
         android:gravity="center"
         android:textStyle="bold"
         android:text="@string/subtitle_possession" />
 
-    <EditText
-        android:id="@+id/edittext_user"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_user"
         android:layout_below="@+id/possession_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        app:layout_marginTopPercent="5%"
-        android:textSize="14sp"
-        android:hint="@string/hint_user"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
 
-    <EditText
-        android:id="@+id/edittext_datetime"
-        android:layout_below="@+id/edittext_user"
+        <EditText
+            android:id="@+id/edittext_user"
+            android:layout_below="@+id/possession_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_widthPercent="80%"
+            app:layout_marginTopPercent="5%"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="@string/hint_user"
+            android:theme="@style/EditTextHintBlack"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_datetime"
+        android:layout_below="@+id/layout_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_widthPercent="80%"
-        android:textSize="14sp"
-        android:hint="@string/hint_datetime"
         android:theme="@style/EditTextHintBlack"
-        android:textColor="@color/colorPrimaryDark" />
+        app:layout_widthPercent="80%">
+
+        <EditText
+            android:id="@+id/edittext_datetime"
+            android:layout_below="@+id/edittext_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textIsSelectable="false"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:hint="@string/hint_datetime"
+            android:textColor="@color/colorAppGrayText" />
+
+    </android.support.design.widget.TextInputLayout>
 
 </android.support.percent.PercentRelativeLayout>

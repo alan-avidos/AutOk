@@ -1,7 +1,6 @@
 package avidos.autok.activity;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,16 +17,14 @@ import avidos.autok.R;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.User;
+import avidos.autok.helper.OnPageCommunication;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DocumentationFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link DocumentationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DocumentationFragment extends Fragment {
+public class DocumentationFragment extends Fragment implements OnPageCommunication {
 
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
@@ -36,6 +33,10 @@ public class DocumentationFragment extends Fragment {
     private User mUser;
     private Cars mCar;
     private Assignment mAssignment;
+
+    private Long dateTime;
+
+    private boolean isDateSelected = false;
 
     /**
      * The number of pages (wizard steps) to show in this demo.
@@ -54,7 +55,9 @@ public class DocumentationFragment extends Fragment {
     private PagerAdapter mPagerAdapter;
     private CirclePageIndicator mIndicator;
 
-    private OnFragmentInteractionListener mListener;
+    // Fragments
+    FirstPageDocumentationFragment firstPageDocumentationFragment;
+    SecondPageDocumentationFragment secondPageDocumentationFragment;
 
     public DocumentationFragment() {
         // Required empty public constructor
@@ -101,11 +104,30 @@ public class DocumentationFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void dateSelected(boolean isDateSelected) {
+        this.isDateSelected = isDateSelected;
+    }
+
+    @Override
+    public boolean isDateSelected() {
+        return isDateSelected;
+    }
+
+    @Override
+    public void changePage(int page) {
+        mPager.setCurrentItem(page);
+        firstPageDocumentationFragment.setError();
+    }
+
+    @Override
+    public void setDateTime(Long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    @Override
+    public Long getDateTime() {
+        return dateTime;
     }
 
     /**
@@ -121,11 +143,17 @@ public class DocumentationFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
+                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
+                    firstPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
+                    return firstPageDocumentationFragment;
                 case 1:
-                    return SecondPageDocumentationFragment.newInstance(mUser, mCar, null);
+                    secondPageDocumentationFragment = SecondPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
+                    secondPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
+                    return secondPageDocumentationFragment;
                 default:
-                    return FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
+                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
+                    firstPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
+                    return firstPageDocumentationFragment;
             }
         }
 
@@ -149,21 +177,5 @@ public class DocumentationFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }

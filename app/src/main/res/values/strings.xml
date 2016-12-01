@@ -32,6 +32,9 @@
     <string name="title_activity_tab_example">TabExampleActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <string name="radial_time_picker_result_value">%1$02d:%2$02d</string>
+    <string name="date_picker_result_value">%1$s/%2$s/%3$s</string>
+
     <string name="title_profile">Perfil</string>
     <string name="profile_name">Nombre</string>
     <string name="profile_username">Usuario</string>
@@ -89,6 +92,13 @@
     <string name="filename_rightpic">%1$s_pic4</string>
     <string name="filename_crashpic">%1$s_crash</string>
     <string name="filename_scratchpic">%1$s_scratch</string>
+
+    <string name="car_brand">Marca: %1$s</string>
+    <string name="car_subbrand">SubMarca: %1$s</string>
+    <string name="car_type">Tipo: %1$s</string>
+    <string name="car_model">Modelo: %1$s</string>
+    <string name="car_color">Color: %1$s</string>
+    <string name="car_plate">Placas: %1$s</string>
 
     <string name="filename_warning_lights">%1$s_warninglights</string>
     <string name="filename_seats">%1$s_seats</string>

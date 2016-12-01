@@ -1,7 +1,6 @@
 package avidos.autok.activity;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,9 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,7 +27,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
@@ -69,6 +65,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     private Locale locale;
     private boolean mIsOdometerModified = false;
     private boolean mIsFuelLevelModified = false;
+    private boolean misBothModified = false;
     // Fragment
     private OnFragmentInteractionListener mListener;
     // UI
@@ -173,11 +170,11 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         mFuelLevel.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, float progress, boolean fromUser) {
-                if(mIsFuelLevelModified) {
-                    if(!mIsOdometerModified) {
+                if(!mIsFuelLevelModified) {
+                    mIsFuelLevelModified = true;
+                    if(mIsOdometerModified) {
                         showFAB();
                     }
-                    mIsFuelLevelModified = true;
                 }
                 writeFuelLevel((double) progress / 100);
             }
@@ -345,11 +342,12 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
                 mFuelLevel.setProgress((float) (assignment.fuelLevel * 100));
                 mTextViewKm.setText(NumberFormat.getNumberInstance(locale).format(assignment.mileage));
                 if(assignment.fuelLevel > 0.01 && assignment.mileage > 0) {
-                    if(mIsOdometerModified) {
-                        if(!mIsFuelLevelModified) {
+                    if(!mIsFuelLevelModified) {
+                        mIsFuelLevelModified = true;
+                        if(!mIsOdometerModified) {
+                            mIsOdometerModified = true;
                             showFAB();
                         }
-                        mIsFuelLevelModified = true;
                     }
                 }
             }
@@ -412,11 +410,11 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     }
 
     public void writeOdometer(Long kilometers) {
-        if(mIsOdometerModified) {
-            if(!mIsFuelLevelModified) {
+        if(!mIsOdometerModified) {
+            mIsOdometerModified = true;
+            if(mIsFuelLevelModified) {
                 showFAB();
             }
-            mIsFuelLevelModified = true;
         }
         mDatabaseFuel = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("mileage");
         mDatabaseFuel.setValue(kilometers);

@@ -1,7 +1,6 @@
 package avidos.autok.activity;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,10 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import avidos.autok.R;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.User;
+import avidos.autok.helper.OnPageCommunication;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,17 +31,23 @@ import avidos.autok.entity.User;
  * Use the {@link FirstPageDocumentationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FirstPageDocumentationFragment extends Fragment {
+public class FirstPageDocumentationFragment extends Fragment implements View.OnClickListener,
+        CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener  {
 
     private OnFragmentInteractionListener mListener;
+
+    private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
+    private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
 
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
     private static final String ARG_ASSIGNMENT = "assignment";
+    private static final String WHITESPACE = " ";
 
     private Cars mCar;
     private User mUser;
     private Assignment mAssignment;
+    private String dateTime;
     // UI
     private EditText mBrandView;
     private EditText mSubBrandView;
@@ -43,6 +57,8 @@ public class FirstPageDocumentationFragment extends Fragment {
     private EditText mPlateView;
     private EditText mUserView;
     private EditText mDateTimeView;
+    //
+    private OnPageCommunication onPageCommunication;
 
 
     public FirstPageDocumentationFragment() {
@@ -97,18 +113,11 @@ public class FirstPageDocumentationFragment extends Fragment {
         mColorView.setText(mCar.color);
         mPlateView.setText(mCar.plate);
         mUserView.setText(mUser.name);
-        if(mAssignment != null)
-            mDateTimeView.setText(mAssignment.start.toString());
+
+        mDateTimeView.setOnClickListener(this);
 
         return view;
 
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -128,6 +137,73 @@ public class FirstPageDocumentationFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        RadialTimePickerDialogFragment rtpd = (RadialTimePickerDialogFragment) getFragmentManager().findFragmentByTag(FRAG_TAG_TIME_PICKER);
+        if (rtpd != null) {
+            rtpd.setOnTimeSetListener(this);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+
+            case R.id.edittext_datetime:
+                CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
+                        .setOnDateSetListener(this);
+                cdp.show(getFragmentManager(), FRAG_TAG_DATE_PICKER);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
+        dateTime = dateTime.concat(WHITESPACE);
+        dateTime = dateTime.concat(getString(R.string.radial_time_picker_result_value, hourOfDay, minute));
+        mDateTimeView.setText(dateTime);
+        onPageCommunication.setDateTime(getTimeStamp(dateTime));
+    }
+
+    @Override
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        RadialTimePickerDialogFragment rtpd = new RadialTimePickerDialogFragment()
+                .setOnTimeSetListener(this);
+        rtpd.show(getFragmentManager(), FRAG_TAG_TIME_PICKER);
+        dateTime = getString(R.string.date_picker_result_value, Integer.toString(dayOfMonth), Integer.toString(monthOfYear),
+                Integer.toString(year));
+        onPageCommunication.dateSelected(true);
+        mDateTimeView.setError(null);
+    }
+
+    public void setOnPageCommunication(OnPageCommunication onPageCommunication) {
+        this.onPageCommunication = onPageCommunication;
+    }
+
+    public void setError() {
+
+        mDateTimeView.setError(null);
+        View focusView;
+        mDateTimeView.setError(getString(R.string.error_field_required));
+        focusView = mDateTimeView;
+        focusView.requestFocus();
+    }
+
+    public Long getTimeStamp(String dateTime) {
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date date = null;
+        try {
+            date = formatter.parse(dateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date != null ? date.getTime() : 0;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -139,7 +215,7 @@ public class FirstPageDocumentationFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        Boolean onFragmentInteraction(String action);
     }
 }

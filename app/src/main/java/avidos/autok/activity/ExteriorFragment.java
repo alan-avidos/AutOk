@@ -1,57 +1,42 @@
 package avidos.autok.activity;
 
 import android.Manifest;
-import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import avidos.autok.R;
@@ -59,10 +44,8 @@ import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.Crash;
 import avidos.autok.entity.Exterior;
-import avidos.autok.entity.FuelLoad;
 import avidos.autok.entity.Scratch;
 import avidos.autok.entity.User;
-import avidos.autok.helper.DatabaseReferences;
 import avidos.autok.helper.DownloadService;
 import avidos.autok.helper.UploadService;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -471,25 +454,25 @@ public class ExteriorFragment extends Fragment {
         switch (picId) {
 
             case "frontPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mFrontPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mFrontPic);
                 break;
             case "rearPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mRearPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRearPic);
                 break;
             case "leftPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mLeftPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mLeftPic);
                 break;
             case "rightPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mRightPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRightPic);
                 break;
             case "crashPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mCrashPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mCrashPic);
                 break;
             case "scratchPic":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mScratchPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mScratchPic);
                 break;
             case "car":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mMainPic);
+                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mMainPic);
                 break;
         }
     }

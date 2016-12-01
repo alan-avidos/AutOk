@@ -3,18 +3,14 @@ package avidos.autok.activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,10 +20,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,17 +31,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 import avidos.autok.R;
-import avidos.autok.adapter.AssignmentsAdapter;
 import avidos.autok.adapter.OptionsAdapter;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
-import avidos.autok.entity.CarsUnassigned;
-import avidos.autok.entity.Crash;
-import avidos.autok.entity.Exterior;
-import avidos.autok.entity.Scratch;
 import avidos.autok.entity.User;
 import avidos.autok.helper.DownloadService;
 import avidos.autok.helper.ItemClickSupport;
@@ -67,10 +59,12 @@ public class AssignationFragment extends Fragment {
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
     private static final String ARG_ASSIGNMENT = "assignment";
+    private static final String ARG_UID = "uid";
     //
     private Cars mCar;
     private User mUser;
     private Assignment mAssignment;
+    private String uid;
 
     // UI
     private TextView mTextViewCarInfo;
@@ -117,12 +111,13 @@ public class AssignationFragment extends Fragment {
      * @return A new instance of fragment AssignationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AssignationFragment newInstance(Cars cars, User user, Assignment assignment) {
+    public static AssignationFragment newInstance(Cars cars, User user, Assignment assignment, String uid) {
         AssignationFragment fragment = new AssignationFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, cars);
         args.putSerializable(ARG_USER, user);
         args.putSerializable(ARG_ASSIGNMENT, assignment);
+        args.putSerializable(ARG_UID, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -134,6 +129,7 @@ public class AssignationFragment extends Fragment {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
             mAssignment = (Assignment) getArguments().getSerializable(ARG_ASSIGNMENT);
+            uid = getArguments().getString(ARG_UID);
         }
     }
 
@@ -201,7 +197,6 @@ public class AssignationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 reAssignCar();
-                getFragmentManager().popBackStack();
             }
         });
 
@@ -343,6 +338,7 @@ public class AssignationFragment extends Fragment {
             mProgressDialog = new ProgressDialog(getContext());
             mProgressDialog.setMessage("Loading...");
             mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
         }
 
         mProgressDialog.show();
@@ -352,8 +348,8 @@ public class AssignationFragment extends Fragment {
             @Override
             public void run() {
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mProgressDialog.cancel();
-                    Toast.makeText(getContext(),"Revise su conexión a internet",Toast.LENGTH_LONG).show();
+                    mProgressDialog.dismiss();
+                    //Toast.makeText(getContext(),"Revise su conexión a internet",Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -407,6 +403,7 @@ public class AssignationFragment extends Fragment {
 
                 mDestinyDatabase.setValue(dataSnapshot.getValue());
                 mOriginDatabase.removeValue();
+                updateUser();
             }
 
             @Override
@@ -418,6 +415,21 @@ public class AssignationFragment extends Fragment {
             }
         };
         mOriginDatabase.addListenerForSingleValueEvent(reFuelListener);
+    }
+
+    private void updateUser() {
+
+        mUser.assignation = "";
+
+        mOriginDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(mUser.adminUid);
+        Map<String, Object> postValues = mUser.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/" + uid + "/", postValues);
+
+        mOriginDatabase.updateChildren(childUpdates);
+
+        getFragmentManager().popBackStackImmediate("MainFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     /**

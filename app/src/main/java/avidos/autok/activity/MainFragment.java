@@ -2,9 +2,9 @@ package avidos.autok.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,14 +28,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import avidos.autok.R;
 import avidos.autok.adapter.AssignmentsAdapter;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
-import avidos.autok.entity.CarsUnassigned;
 import avidos.autok.entity.User;
 import avidos.autok.helper.ItemClickSupport;
 
@@ -70,7 +73,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
     //
     private User mUserData;
+    private Cars mCar;
     private List<Cars> carsList;
+    private List<Assignment> assignmentList;
     private String mSelectionService;
     private String mSelectionType;
     private boolean mSpinnerSelected = false;
@@ -111,7 +116,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        final View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         mButtonAvailable = (Button) view.findViewById(R.id.button_available);
         mButtonNext = (Button) view.findViewById(R.id.button_next);
@@ -147,6 +152,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         mSpinnerService.setOnTouchListener(this);
 
         carsList = new ArrayList<>();
+        assignmentList = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_assignments);
 
         // use this setting to improve performance if you know that changes
@@ -164,17 +170,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                mSpinnerType.setSelection(0);
-                mSpinnerService.setSelection(0);
-                writeNewAssignation(carsList.get(position));
-                mListener.onFragmentInteraction("AssignationFragment");
-                final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                assignationFragment = AssignationFragment.newInstance(carsList.get(position), mUserData, mAssignment);
-                carsList.clear();
-                mAdapter.notifyDataSetChanged();
-                fragmentTransaction.replace(R.id.content_main, assignationFragment, "AssignationFragment");
-                fragmentTransaction.addToBackStack("AssignationFragment");
-                fragmentTransaction.commit();
+                if(mIsAvailableSelected) {
+                    writeNewAssignation(carsList.get(position));
+                    loadAssignation(carsList.get(position));
+                } else {
+                    if(assignmentList.get(position).end == 0)
+                        Snackbar.make(view, "Este vehículo no está disponible. Aún no hay fecha de disponibilidad.", Snackbar.LENGTH_LONG).show();
+                    else
+                        Snackbar.make(view,  "Este vehiculo estará disponible hasta el " + getDate(assignmentList.get(position).end), Snackbar.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -316,8 +320,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                hideProgressDialog();
+
                 mUserData = dataSnapshot.getValue(User.class);
+                Log.e("____data___", mUserData.assignation);
+                if(mUserData.assignation.length() > 0) {
+                    getCar();
+                } else {
+                    hideProgressDialog();
+                }
             }
 
             @Override
@@ -335,7 +345,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         try {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid);
         } catch (NullPointerException npe) {
-            //readUserAdmin();
             return;
         }
 
@@ -343,6 +352,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 carsList.clear();
+                assignmentList.clear();
                 if(mIsAvailableSelected) {
                     for (DataSnapshot carSnapshot: dataSnapshot.getChildren()) {
                         if(!carSnapshot.child("assignment").exists()) {
@@ -357,7 +367,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                         if(carSnapshot.child("assignment").exists()) {
                             if(carSnapshot.child("generalInfo").child("allowedUse").child(mSelectionService).child(mSelectionType).getValue(boolean.class)) {
                                 Cars car = carSnapshot.child("generalInfo").getValue(Cars.class);
+                                Assignment assignment = carSnapshot.child("assignment").getValue(Assignment.class);
                                 carsList.add(car);
+                                assignmentList.add(assignment);
                             }
                         }
                     }
@@ -374,11 +386,80 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         });
     }
 
+    private void getCar() {
+
+        try {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignation).child("generalInfo");
+        } catch (NullPointerException npe) {
+            return;
+        }
+
+        final ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+
+                mCar = dataSnapshot.getValue(Cars.class);
+                getAssignment();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.addListenerForSingleValueEvent(postListener);
+    }
+
+    private void getAssignment() {
+
+        try {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignation).child("assignment");
+        } catch (NullPointerException npe) {
+            return;
+        }
+
+        final ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+
+                mAssignment = dataSnapshot.getValue(Assignment.class);
+                hideProgressDialog();
+                loadAssignation(mCar);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.addListenerForSingleValueEvent(postListener);
+    }
+
     private void writeNewAssignation(Cars car) {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(car.plate).child("assignment");
-        mAssignment = new Assignment((long)0, System.currentTimeMillis(), mUser.getUid(), mSelectionService, mSelectionType, mUserData.name, 0.0, (long)0);
+        mAssignment = new Assignment((long)0, System.currentTimeMillis(), mUser.getUid(), mSelectionService, mSelectionType, mUserData.name, "",0.0, (long)0);
         mDatabase.setValue(mAssignment);
+        updateUser(car);
+    }
+
+    private void updateUser(Cars car) {
+
+        mUserData.assignation = car.plate;
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(mUserData.adminUid);
+        Map<String, Object> postValues = mUserData.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/" + mUser.getUid() + "/", postValues);
+
+        mDatabase.updateChildren(childUpdates);
     }
 
     private void showProgressDialog() {
@@ -418,6 +499,33 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         if(event.getAction() == MotionEvent.ACTION_UP)
             mSpinnerSelected = true;
         return false;
+    }
+
+    private String getDate(long timeStamp){
+
+        try{
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date netDate = (new Date(timeStamp));
+            return sdf.format(netDate);
+        }
+        catch(Exception ex){
+            return "xx";
+        }
+    }
+
+    private void loadAssignation (Cars car) {
+        mSpinnerType.setSelection(0);
+        mSpinnerService.setSelection(0);
+        mListener.onFragmentInteraction("AssignationFragment");
+        final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        assignationFragment = AssignationFragment.newInstance(car, mUserData, mAssignment, mUser.getUid());
+        Log.e("___errir___", mUserData.adminUid + "/" + car.plate + "/" + mAssignment.start.toString());
+        carsList.clear();
+        assignmentList.clear();
+        mAdapter.notifyDataSetChanged();
+        fragmentTransaction.replace(R.id.content_main, assignationFragment, "AssignationFragment");
+        fragmentTransaction.addToBackStack("AssignationFragment");
+        fragmentTransaction.commit();
     }
 
     /**

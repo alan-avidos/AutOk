@@ -79,11 +79,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="31dp" >
 
-<!--        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src=""/>-->
-
         <Button
             android:id="@+id/reasign_button"
             style="?android:textAppearanceSmall"
@@ -95,23 +90,6 @@
             android:textStyle="bold" />
 
     </android.support.percent.PercentFrameLayout>
-
-<!--    <Button
-        android:id="@+id/reasign_button"
-        style="?android:textAppearanceSmall"
-        android:background="@drawable/rounded_border_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_widthPercent="75%"
-        app:layout_heightPercent="10%"
-        app:layout_marginTopPercent="5%"
-        app:layout_marginBottomPercent="5%"
-        android:text="@string/action_reasign"
-        android:textColor="@color/colorAppWhiteText"
-        android:textStyle="bold"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="31dp" />-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_options"
