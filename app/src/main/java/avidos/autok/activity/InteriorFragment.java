@@ -265,6 +265,7 @@ public class InteriorFragment extends Fragment {
             if(!mIsRatingModified) {
                 showFAB();
                 mIsRatingModified = true;
+                mListener.onFragmentInteraction("InteriorFragment");
             }
             mInterior.rating = Long.valueOf(rightPinValue);
             writeExteriorCheck();
@@ -278,7 +279,7 @@ public class InteriorFragment extends Fragment {
             switch (v.getId()) {
 
                 case R.id.car_image_warning_lights:
-                    mFileName = String.format(getResources().getString(R.string.filename_frontpic), mCar.plate);
+                    mFileName = String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate);
                     break;
                 case R.id.car_image_seats:
                     mFileName = String.format(getResources().getString(R.string.filename_seats), mCar.plate);
@@ -307,22 +308,22 @@ public class InteriorFragment extends Fragment {
         switch (picId) {
 
             case "warningLights":
-                Picasso.with(getContext()).load(downloadPath).noFade().into(mWarningLightsImage);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mWarningLightsImage);
                 break;
             case "seats":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mSeatsImage);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mSeatsImage);
                 break;
             case "ac":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mACImage);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mACImage);
                 break;
             case "radio":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRadioImage);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRadioImage);
                 break;
             case "mat":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mMatImage);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mMatImage);
                 break;
             case "car":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mCarImage);
+                Picasso.with(getContext()).load(downloadPath).noFade().into(mCarImage);
                 break;
         }
     }
@@ -407,12 +408,12 @@ public class InteriorFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-/*        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override
@@ -598,7 +599,6 @@ public class InteriorFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String fragment);
     }
 }

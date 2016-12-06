@@ -21,9 +21,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -383,13 +381,6 @@ public class AssignationFragment extends Fragment {
         Picasso.with(getContext()).load(downloadPath).into(image);
 
         dialog.show();
-
-/*        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface d) {
-
-            }
-        });*/
     }
 
     public void reAssignCar() {
@@ -399,7 +390,6 @@ public class AssignationFragment extends Fragment {
         ValueEventListener reFuelListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Exterior object and use the values to update the UI
 
                 mDestinyDatabase.setValue(dataSnapshot.getValue());
                 mOriginDatabase.removeValue();
@@ -408,10 +398,8 @@ public class AssignationFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Exterior failed, log a message
-                // Getting Exterior failed, log a message
+
                 Log.w("__load__", "loadPost:onCancelled", databaseError.toException());
-                // ...
             }
         };
         mOriginDatabase.addListenerForSingleValueEvent(reFuelListener);

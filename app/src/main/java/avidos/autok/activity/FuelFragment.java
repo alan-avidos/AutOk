@@ -65,7 +65,6 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     private Locale locale;
     private boolean mIsOdometerModified = false;
     private boolean mIsFuelLevelModified = false;
-    private boolean misBothModified = false;
     // Fragment
     private OnFragmentInteractionListener mListener;
     // UI
@@ -170,17 +169,17 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         mFuelLevel.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, float progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(CircularSeekBar seekBar) {
                 if(!mIsFuelLevelModified) {
                     mIsFuelLevelModified = true;
                     if(mIsOdometerModified) {
                         showFAB();
                     }
                 }
-                writeFuelLevel((double) progress / 100);
-            }
-
-            @Override
-            public void onStopTrackingTouch(CircularSeekBar seekBar) {
+                writeFuelLevel((double) seekBar.getProgress() / 100);
             }
 
             @Override
@@ -400,7 +399,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     }
 
     public void writeFuelLoad() {
-        mDatabaseReFuel = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("fuelLoad").child(String.valueOf(System.currentTimeMillis()/1000));
+        mDatabaseReFuel = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("fuelLoad").child(String.valueOf(System.currentTimeMillis()));
         mDatabaseReFuel.setValue(new FuelLoad(Long.valueOf(mEditTextLiters.getText().toString()), Double.valueOf(mEditTextCost.getText().toString()), Long.valueOf(mEditTextKm.getText().toString())));
     }
 
@@ -456,6 +455,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     }
 
     public void showFAB() {
+        mListener.onFragmentInteraction("FuelFragment");
         mDoneButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
         mDoneButton.setClickable(true);
     }

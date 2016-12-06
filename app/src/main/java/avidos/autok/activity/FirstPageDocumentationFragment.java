@@ -31,8 +31,7 @@ import avidos.autok.helper.OnPageCommunication;
  * Use the {@link FirstPageDocumentationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FirstPageDocumentationFragment extends Fragment implements View.OnClickListener,
-        CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener  {
+public class FirstPageDocumentationFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,8 +56,6 @@ public class FirstPageDocumentationFragment extends Fragment implements View.OnC
     private EditText mPlateView;
     private EditText mUserView;
     private EditText mDateTimeView;
-    //
-    private OnPageCommunication onPageCommunication;
 
 
     public FirstPageDocumentationFragment() {
@@ -113,8 +110,8 @@ public class FirstPageDocumentationFragment extends Fragment implements View.OnC
         mColorView.setText(mCar.color);
         mPlateView.setText(mCar.plate);
         mUserView.setText(mUser.name);
-
-        mDateTimeView.setOnClickListener(this);
+        mDateTimeView.setText(getDateTime(mAssignment.start));
+        //mDateTimeView.setOnClickListener(this);
 
         return view;
 
@@ -140,68 +137,18 @@ public class FirstPageDocumentationFragment extends Fragment implements View.OnC
     @Override
     public void onResume() {
         super.onResume();
-        RadialTimePickerDialogFragment rtpd = (RadialTimePickerDialogFragment) getFragmentManager().findFragmentByTag(FRAG_TAG_TIME_PICKER);
-        if (rtpd != null) {
-            rtpd.setOnTimeSetListener(this);
+    }
+
+    private String getDateTime(long timeStamp){
+
+        try{
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Date netDate = (new Date(timeStamp));
+            return sdf.format(netDate);
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.edittext_datetime:
-                CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
-                        .setOnDateSetListener(this);
-                cdp.show(getFragmentManager(), FRAG_TAG_DATE_PICKER);
-                break;
-            default:
-                break;
+        catch(Exception ex){
+            return "xx";
         }
-    }
-
-    @Override
-    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
-        dateTime = dateTime.concat(WHITESPACE);
-        dateTime = dateTime.concat(getString(R.string.radial_time_picker_result_value, hourOfDay, minute));
-        mDateTimeView.setText(dateTime);
-        onPageCommunication.setDateTime(getTimeStamp(dateTime));
-    }
-
-    @Override
-    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        RadialTimePickerDialogFragment rtpd = new RadialTimePickerDialogFragment()
-                .setOnTimeSetListener(this);
-        rtpd.show(getFragmentManager(), FRAG_TAG_TIME_PICKER);
-        dateTime = getString(R.string.date_picker_result_value, Integer.toString(dayOfMonth), Integer.toString(monthOfYear),
-                Integer.toString(year));
-        onPageCommunication.dateSelected(true);
-        mDateTimeView.setError(null);
-    }
-
-    public void setOnPageCommunication(OnPageCommunication onPageCommunication) {
-        this.onPageCommunication = onPageCommunication;
-    }
-
-    public void setError() {
-
-        mDateTimeView.setError(null);
-        View focusView;
-        mDateTimeView.setError(getString(R.string.error_field_required));
-        focusView = mDateTimeView;
-        focusView.requestFocus();
-    }
-
-    public Long getTimeStamp(String dateTime) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        Date date = null;
-        try {
-            date = formatter.parse(dateTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date != null ? date.getTime() : 0;
     }
 
     /**

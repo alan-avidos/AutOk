@@ -19,7 +19,7 @@ import avidos.autok.R;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, ExteriorFragment.OnFragmentInteractionListener,
         MainFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AssignationFragment.OnFragmentInteractionListener,
-        FuelFragment.OnFragmentInteractionListener {
+        FuelFragment.OnFragmentInteractionListener, InteriorFragment.OnFragmentInteractionListener, SecondPageDocumentationFragment.OnFragmentInteractionListener {
 
     // Fragments
     private MainFragment mMainFragment;
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     //
     private boolean isACarAssigned = false;
+    private boolean [] mFragmentInteraction = {false, false, false};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +143,44 @@ public class MainActivity extends AppCompatActivity
             isACarAssigned = true;
         } else if (fragment.equals("MainFragment")) {
             isACarAssigned = false;
+        } else if (fragment.equals("ExteriorFragment")) {
+            mFragmentInteraction[0] = true;
+        } else if (fragment.equals("InteriorFragment")) {
+            mFragmentInteraction[1] = true;
+        } else if (fragment.equals("FuelFragment")) {
+            mFragmentInteraction[2] = true;
         }
+    }
+
+    @Override
+    public boolean checkFragmentInteraction() {
+        for (boolean interacted : mFragmentInteraction) {
+            if (!interacted) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String getFragments() {
+        String fragments = "";
+        boolean comma = false;
+        if(!mFragmentInteraction[0]) {
+            fragments = fragments.concat("Verificación exterior");
+            comma = true;
+        }
+        if(!mFragmentInteraction[1]) {
+            if(comma) {
+                fragments = fragments.concat(", ");
+            }
+            fragments = fragments.concat("Verificación interior");
+            comma = true;
+        }
+        if(!mFragmentInteraction[2]) {
+            if(comma) {
+                fragments = fragments.concat(", ");
+            }
+            fragments = fragments.concat("Combustible / Odómetro");
+        }
+        return fragments;
     }
 }

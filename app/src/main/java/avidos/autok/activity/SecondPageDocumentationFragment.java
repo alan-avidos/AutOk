@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
@@ -62,8 +64,6 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
     private EditText mExpirationView;
     private EditText mTelephoneView;
     private Button mFinishButton;
-    //
-    private OnPageCommunication onPageCommunication;
     // FireBase
     private DatabaseReference mDatabase;
 
@@ -124,32 +124,21 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-/*        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void setOnPageCommunication(OnPageCommunication onPageCommunication) {
-        this.onPageCommunication = onPageCommunication;
     }
 
     @Override
@@ -162,10 +151,12 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
                 cdp.show(getFragmentManager(), FRAG_TAG_DATE_PICKER);
                 break;
             case R.id.finish_button:
-                if(!onPageCommunication.isDateSelected()) {
-                    onPageCommunication.changePage(0);
-                } else {
-                    attemptWrite();
+                if (mListener != null) {
+                    if(mListener.checkFragmentInteraction()) {
+                        attemptWrite();
+                    } else {
+                        Toast.makeText(getContext(), "No ha completado: " + mListener.getFragments(), Toast.LENGTH_LONG).show();
+                    }
                 }
             default:
                 break;
@@ -217,6 +208,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
             focusView.requestFocus();
         } else {
             writeAssignment();
+            getFragmentManager().popBackStack();
         }
     }
 
@@ -268,7 +260,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        boolean checkFragmentInteraction();
+        String getFragments();
     }
 }

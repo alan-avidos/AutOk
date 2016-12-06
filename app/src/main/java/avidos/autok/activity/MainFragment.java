@@ -283,8 +283,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             mUser = FirebaseAuth.getInstance().getCurrentUser();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(mUser.getUid()).child("adminUid");
         } catch (NullPointerException npe) {
-            //hideProgressDialog();
-            //readUserAdmin();
             return;
         }
 
@@ -312,7 +310,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             mUser = FirebaseAuth.getInstance().getCurrentUser();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(adminUid).child(mUser.getUid());
         } catch (NullPointerException npe) {
-            //readUserAdmin();
             return;
         }
 
@@ -322,7 +319,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 // Get Post object and use the values to update the UI
 
                 mUserData = dataSnapshot.getValue(User.class);
-                Log.e("____data___", mUserData.assignation);
                 if(mUserData.assignation.length() > 0) {
                     getCar();
                 } else {
@@ -496,8 +492,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if(event.getAction() == MotionEvent.ACTION_UP)
-            mSpinnerSelected = true;
+        if(event.getAction() == MotionEvent.ACTION_UP) mSpinnerSelected = true;
         return false;
     }
 

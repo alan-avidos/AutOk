@@ -443,6 +443,7 @@ public class ExteriorFragment extends Fragment {
             if(!mIsRatingModified) {
                 showFAB();
                 mIsRatingModified = true;
+                mListener.onFragmentInteraction("ExteriorFragment");
             }
             mExterior.rating = Long.valueOf(rightPinValue);
             writeExteriorCheck();
@@ -454,25 +455,25 @@ public class ExteriorFragment extends Fragment {
         switch (picId) {
 
             case "frontPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mFrontPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mFrontPic);
                 break;
             case "rearPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRearPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRearPic);
                 break;
             case "leftPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mLeftPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mLeftPic);
                 break;
             case "rightPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mRightPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRightPic);
                 break;
             case "crashPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mCrashPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mCrashPic);
                 break;
             case "scratchPic":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mScratchPic);
+                Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mScratchPic);
                 break;
             case "car":
-                Picasso.with(getContext()).load(downloadPath).centerCrop().noFade().into(mMainPic);
+                Picasso.with(getContext()).load(downloadPath).noFade().into(mMainPic);
                 break;
         }
     }
@@ -576,7 +577,6 @@ public class ExteriorFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-
         void onFragmentInteraction(String fragment);
     }
 }

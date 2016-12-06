@@ -24,7 +24,7 @@ import avidos.autok.helper.OnPageCommunication;
  * Use the {@link DocumentationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DocumentationFragment extends Fragment implements OnPageCommunication {
+public class DocumentationFragment extends Fragment {
 
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
@@ -104,32 +104,6 @@ public class DocumentationFragment extends Fragment implements OnPageCommunicati
         return view;
     }
 
-    @Override
-    public void dateSelected(boolean isDateSelected) {
-        this.isDateSelected = isDateSelected;
-    }
-
-    @Override
-    public boolean isDateSelected() {
-        return isDateSelected;
-    }
-
-    @Override
-    public void changePage(int page) {
-        mPager.setCurrentItem(page);
-        firstPageDocumentationFragment.setError();
-    }
-
-    @Override
-    public void setDateTime(Long dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    @Override
-    public Long getDateTime() {
-        return dateTime;
-    }
-
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -143,16 +117,13 @@ public class DocumentationFragment extends Fragment implements OnPageCommunicati
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
-                    firstPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
+                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
                     return firstPageDocumentationFragment;
                 case 1:
                     secondPageDocumentationFragment = SecondPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
-                    secondPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
                     return secondPageDocumentationFragment;
                 default:
-                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, null);
-                    firstPageDocumentationFragment.setOnPageCommunication(DocumentationFragment.this);
+                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
                     return firstPageDocumentationFragment;
             }
         }

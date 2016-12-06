@@ -7,7 +7,7 @@
     <string name="action_sign_in">Ingresar</string>
     <string name="action_finish">Finalizar</string>
     <string name="action_update">Actualizar</string>
-    <string name="action_reasign">Reasignar</string>
+    <string name="action_reasign">Liberar</string>
     <string name="action_available">Disponibles</string>
     <string name="action_next">Próximos</string>
     <string name="action_cancel">Cancelar</string>
