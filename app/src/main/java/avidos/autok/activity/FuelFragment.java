@@ -59,6 +59,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
 
     private User mUser;
     private Cars mCar;
+    private Assignment mAssignmentCopy;
     private BigInteger mKilometers;
     private FuelLoad fuelLoad;
     private List<FuelLoad> fuelLoads;
@@ -80,6 +81,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     private Button mReFuelButton;
     private Button mSaveButton;
     private FloatingActionButton mDoneButton;
+    private FloatingActionButton mCancelButton;
     private PercentRelativeLayout mSeekBarLayout;
 
 
@@ -136,11 +138,21 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         mSaveButton = (Button) view.findViewById(R.id.save_fuel_button);
         mReFuelButton = (Button) view.findViewById(R.id.refuel_button);
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_fuel_done);
+        mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_fuel_cancel);
         mSeekBarLayout = (PercentRelativeLayout) view.findViewById(R.id.seekbar_layout);
 
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeOdometer(mAssignmentCopy.mileage);
+                writeFuelLevel(mAssignmentCopy.fuelLevel);
                 getFragmentManager().popBackStack();
             }
         });
@@ -336,6 +348,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
                 // Get fuelLoad object and use the values to update the UI
 
                 Assignment assignment = dataSnapshot.getValue(Assignment.class);
+                mAssignmentCopy = dataSnapshot.getValue(Assignment.class);
                 if(assignment == null)
                     return;
                 mFuelLevel.setProgress((float) (assignment.fuelLevel * 100));
@@ -358,7 +371,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
                 // ...
             }
         };
-        mDatabaseReFuel.addValueEventListener(reFuelListener);
+        mDatabaseReFuel.addListenerForSingleValueEvent(reFuelListener);
     }
 
     public void attemptToWrite() {
@@ -428,8 +441,6 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
@@ -458,6 +469,8 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         mListener.onFragmentInteraction("FuelFragment");
         mDoneButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
         mDoneButton.setClickable(true);
+        mCancelButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
+        mCancelButton.setClickable(true);
     }
 
     /**

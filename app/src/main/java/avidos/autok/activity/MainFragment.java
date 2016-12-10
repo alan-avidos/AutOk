@@ -40,6 +40,9 @@ import avidos.autok.R;
 import avidos.autok.adapter.AssignmentsAdapter;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
+import avidos.autok.entity.Check;
+import avidos.autok.entity.Exterior;
+import avidos.autok.entity.Interior;
 import avidos.autok.entity.User;
 import avidos.autok.helper.ItemClickSupport;
 
@@ -333,7 +336,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 // ...
             }
         };
-        mDatabase.addValueEventListener(postListener);
+        mDatabase.addListenerForSingleValueEvent(postListener);
     }
 
     private void filterCars() {
@@ -440,7 +443,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private void writeNewAssignation(Cars car) {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(car.plate).child("assignment");
-        mAssignment = new Assignment((long)0, System.currentTimeMillis(), mUser.getUid(), mSelectionService, mSelectionType, mUserData.name, "",0.0, (long)0);
+        mAssignment = new Assignment((long)0, System.currentTimeMillis(), mUser.getUid(), mSelectionService, mSelectionType, mUserData.name, "",0.0, (long)0, new Check(new Interior(), new Exterior()));
         mDatabase.setValue(mAssignment);
         updateUser(car);
     }

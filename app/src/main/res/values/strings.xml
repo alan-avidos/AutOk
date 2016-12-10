@@ -9,6 +9,7 @@
     <string name="action_update">Actualizar</string>
     <string name="action_reasign">Liberar</string>
     <string name="action_available">Disponibles</string>
+    <string name="action_delete">Eliminar</string>
     <string name="action_next">Próximos</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_sign_in_short">Sign in</string>

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -20,8 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +52,7 @@ import avidos.autok.entity.Radio;
 import avidos.autok.entity.Seats;
 import avidos.autok.entity.User;
 import avidos.autok.entity.WarningLights;
+import avidos.autok.helper.DeleteService;
 import avidos.autok.helper.DownloadService;
 import avidos.autok.helper.UploadService;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -75,6 +79,7 @@ public class InteriorFragment extends Fragment {
     private User mUser;
     private Cars mCar;
     private Interior mInterior;
+    private Interior mInteriorCopy;
     private WarningLights mWarningLights;
     private Seats mSeats;
     private Radio mRadio;
@@ -98,6 +103,7 @@ public class InteriorFragment extends Fragment {
     private CircleImageView mMatImage;
     private SwitchButton mMatSwitch;
     private FloatingActionButton mDoneButton;
+    private FloatingActionButton mCancelButton;
 
     // FireBase
     private DatabaseReference mDatabaseCheck;
@@ -169,10 +175,20 @@ public class InteriorFragment extends Fragment {
         mMatImage = (CircleImageView) view.findViewById(R.id.car_image_mat);
         mMatSwitch = (SwitchButton) view.findViewById(R.id.switch_mat);
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_interior_done);
+        mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_interior_cancel);
 
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mInterior = mInteriorCopy;
+                writeInteriorCheck();
                 getFragmentManager().popBackStack();
             }
         });
@@ -222,6 +238,11 @@ public class InteriorFragment extends Fragment {
                     case UploadService.UPLOAD_ERROR:
                         onUploadResultIntent(intent);
                         break;
+                    case DeleteService.DELETE_COMPLETED:
+                        downloadImages();
+                    case DeleteService.DELETE_ERROR:
+                        hideProgressDialog();
+                        break;
                 }
             }
         };
@@ -235,23 +256,23 @@ public class InteriorFragment extends Fragment {
             switch (buttonView.getId()){
                 case R.id.switch_warning_lights:
                     mInterior.warningLights.accepted = isChecked;
-                    writeExteriorCheck();
+                    writeInteriorCheck();
                     break;
                 case R.id.switch_seats:
                     mInterior.seats.accepted = isChecked;
-                    writeExteriorCheck();
+                    writeInteriorCheck();
                     break;
                 case R.id.switch_ac:
                     mInterior.ac.accepted = isChecked;
-                    writeExteriorCheck();
+                    writeInteriorCheck();
                     break;
                 case R.id.switch_radio:
                     mInterior.radio.accepted = isChecked;
-                    writeExteriorCheck();
+                    writeInteriorCheck();
                     break;
                 case R.id.switch_mat:
                     mInterior.mat.accepted = isChecked;
-                    writeExteriorCheck();
+                    writeInteriorCheck();
                     break;
                 default:
                     break;
@@ -268,33 +289,72 @@ public class InteriorFragment extends Fragment {
                 mListener.onFragmentInteraction("InteriorFragment");
             }
             mInterior.rating = Long.valueOf(rightPinValue);
-            writeExteriorCheck();
+            writeInteriorCheck();
         }
     };
 
     View.OnClickListener onImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Boolean tag;
+            if (v.getTag() != null) {
+                tag = v.getTag().equals(true);
+            } else {
+                tag = false;
+            }
             switch (v.getId()) {
-
                 case R.id.car_image_warning_lights:
-                    mFileName = String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate));
+                        beginDownload(path, "warningLightsDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_seats:
-                    mFileName = String.format(getResources().getString(R.string.filename_seats), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_seats), mCar.plate));
+                        beginDownload(path, "seatsDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_seats), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_ac:
-                    mFileName = String.format(getResources().getString(R.string.filename_ac), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_ac), mCar.plate));
+                        beginDownload(path, "acDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_ac), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_radio:
-                    mFileName = String.format(getResources().getString(R.string.filename_radio), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_radio), mCar.plate));
+                        beginDownload(path, "radioDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_radio), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_mat:
-                    mFileName = String.format(getResources().getString(R.string.filename_mat), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_mat), mCar.plate));
+                        beginDownload(path, "matDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_mat), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_interior:
-                    mFileName = String.format(getResources().getString(R.string.filename_mainpic2), mCar.plate);
+                        mFileName = String.format(getResources().getString(R.string.filename_mainpic2), mCar.plate);
                     break;
                 default:
                     break;
@@ -305,25 +365,81 @@ public class InteriorFragment extends Fragment {
 
     public void updateCircleImageViews(String picId, String downloadPath) {
 
+        String path;
         switch (picId) {
 
             case "warningLights":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mWarningLightsImage);
+                mWarningLightsImage.setTag(true);
                 break;
             case "seats":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mSeatsImage);
+                mSeatsImage.setTag(true);
                 break;
             case "ac":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mACImage);
+                mACImage.setTag(true);
                 break;
             case "radio":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRadioImage);
+                mRadioImage.setTag(true);
                 break;
             case "mat":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mMatImage);
+                mMatImage.setTag(true);
                 break;
             case "car":
                 Picasso.with(getContext()).load(downloadPath).noFade().into(mCarImage);
+                mCarImage.setTag(true);
+                break;
+            case "warningLightsDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "seatsDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_seats), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "acDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_ac), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "radioDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_radio), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "matDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_mat), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+        }
+    }
+
+    public void setTagImages(String picId) {
+
+        switch (picId) {
+            case "warningLightsDialog":
+                mWarningLightsImage.setTag(false);
+                break;
+            case "seatsDialog":
+                mSeatsImage.setTag(false);
+                break;
+            case "acDialog":
+                mACImage.setTag(false);
+                break;
+            case "radioDialog":
+                mRadioImage.setTag(false);
+                break;
+            case "matDialog":
+                mMatImage.setTag(false);
+                break;
+            case "carDialog":
+                mCarImage.setTag(false);
                 break;
         }
     }
@@ -340,7 +456,38 @@ public class InteriorFragment extends Fragment {
         beginDownload(String.format(mainPath + getResources().getString(R.string.filename_mainpic2), mCar.plate) + ".jpg", "car");
     }
 
-    public void writeExteriorCheck() {
+    public void deleteImage(String fileName) {
+        // Kick off DeleteService to download the file
+        Intent intent = new Intent(getContext(), DeleteService.class)
+                .putExtra(DeleteService.EXTRA_DELETE_PATH, fileName)
+                .setAction(DeleteService.ACTION_DELETE);
+        getActivity().startService(intent);
+
+        // Show loading spinner
+        showProgressDialog();
+    }
+
+    public void showImage(final String downloadPath, final String picId, final String path) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteImage(path);
+                setTagImages(picId);
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ImageView image = (ImageView) dialogLayout.findViewById(R.id.goProDialogImage);
+        Picasso.with(getContext()).load(downloadPath).into(image);
+
+        dialog.show();
+    }
+
+    public void writeInteriorCheck() {
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("interior");
         mDatabaseCheck.setValue(mInterior);
     }
@@ -354,6 +501,7 @@ public class InteriorFragment extends Fragment {
                 // Get Exterior object and use the values to update the UI
 
                 mInterior = dataSnapshot.getValue(Interior.class);
+                mInteriorCopy = dataSnapshot.getValue(Interior.class);
 
                 if (mInterior == null) {
 
@@ -392,6 +540,7 @@ public class InteriorFragment extends Fragment {
                     mMatSwitch.setChecked(mInterior.mat.accepted);
                     mRatingBar.setSeekPinByValue(mInterior.rating);
                 }
+
             }
 
             @Override
@@ -580,6 +729,8 @@ public class InteriorFragment extends Fragment {
     public void showFAB() {
         mDoneButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
         mDoneButton.setClickable(true);
+        mCancelButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
+        mCancelButton.setClickable(true);
     }
 
     @Override

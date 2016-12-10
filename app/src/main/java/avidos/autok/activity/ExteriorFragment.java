@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -20,8 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +49,7 @@ import avidos.autok.entity.Crash;
 import avidos.autok.entity.Exterior;
 import avidos.autok.entity.Scratch;
 import avidos.autok.entity.User;
+import avidos.autok.helper.DeleteService;
 import avidos.autok.helper.DownloadService;
 import avidos.autok.helper.UploadService;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -80,6 +84,7 @@ public class ExteriorFragment extends Fragment {
     private Cars mCar;
     private Assignment mAssignment;
     private Exterior mExterior;
+    private Exterior mExteriorCopy;
     private Crash mCrash;
     private Scratch mScratch;
     private Boolean mIsRatingModified = false;
@@ -96,6 +101,7 @@ public class ExteriorFragment extends Fragment {
     private SwitchButton mScratchSwitch;
     private TextView mCarInfoView;
     private FloatingActionButton mDoneButton;
+    private FloatingActionButton mCancelButton;
 
     // FireBase
     private DatabaseReference mDatabaseCheck;
@@ -165,10 +171,20 @@ public class ExteriorFragment extends Fragment {
         mScratchSwitch = (SwitchButton) view.findViewById(R.id.switch_scratch);
         mCarInfoView = (TextView) view.findViewById(R.id.car_info_exterior);
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_exterior_done);
+        mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_exterior_cancel);
 
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mExterior = mExteriorCopy;
+                writeExteriorCheck();
                 getFragmentManager().popBackStack();
             }
         });
@@ -388,29 +404,76 @@ public class ExteriorFragment extends Fragment {
     View.OnClickListener onImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Boolean tag;
+            if (v.getTag() != null) {
+                tag = v.getTag().equals(true);
+            } else {
+                tag = false;
+            }
             switch (v.getId()) {
 
                 case R.id.front_pic:
-                    mFileName = String.format(getResources().getString(R.string.filename_frontpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_frontpic), mCar.plate));
+                        beginDownload(path, "frontPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_frontpic), mCar.plate);
+                    }
                     break;
                 case R.id.rear_pic:
-                    mFileName = String.format(getResources().getString(R.string.filename_rearpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_rearpic), mCar.plate));
+                        beginDownload(path, "rearPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_rearpic), mCar.plate);
+                    }
                     break;
                 case R.id.left_pic:
-                    mFileName = String.format(getResources().getString(R.string.filename_leftpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_leftpic), mCar.plate));
+                        beginDownload(path, "leftPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_leftpic), mCar.plate);
+                    }
                     break;
                 case R.id.right_pic:
-                    mFileName = String.format(getResources().getString(R.string.filename_rightpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_rightpic), mCar.plate));
+                        beginDownload(path, "rightPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_rightpic), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_crash:
-                    mFileName = String.format(getResources().getString(R.string.filename_crashpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_crashpic), mCar.plate));
+                        beginDownload(path, "crashPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_crashpic), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_scratch:
-                    mFileName = String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate);
+                    if(tag) {
+                        String path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                                String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));
+                        beginDownload(path, "scratchPicDialog");
+                        return;
+                    } else {
+                        mFileName = String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate);
+                    }
                     break;
                 case R.id.car_image_exterior:
-                    mFileName = String.format(getResources().getString(R.string.filename_mainpic1), mCar.plate);
+                        mFileName = String.format(getResources().getString(R.string.filename_mainpic1), mCar.plate);
                     break;
                 default:
                     break;
@@ -451,29 +514,66 @@ public class ExteriorFragment extends Fragment {
     };
 
     public void updateCircleImageViews(String picId, String downloadPath) {
-
+        String path;
         switch (picId) {
 
             case "frontPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mFrontPic);
+                mFrontPic.setTag(true);
                 break;
             case "rearPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRearPic);
+                mRearPic.setTag(true);
                 break;
             case "leftPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mLeftPic);
+                mLeftPic.setTag(true);
                 break;
             case "rightPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mRightPic);
+                mRightPic.setTag(true);
                 break;
             case "crashPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mCrashPic);
+                mCrashPic.setTag(true);
                 break;
             case "scratchPic":
                 Picasso.with(getContext()).load(downloadPath).resize(25, 25).noFade().into(mScratchPic);
+                mScratchPic.setTag(true);
                 break;
             case "car":
                 Picasso.with(getContext()).load(downloadPath).noFade().into(mMainPic);
+                mMainPic.setTag(true);
+                break;
+            case "frontPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_frontpic), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "rearPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_rearpic), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "leftPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_leftpic), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "rightPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_rightpic), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "crashPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_crashpic), mCar.plate));
+                showImage(downloadPath, picId, path);
+                break;
+            case "scratchPicDialog":
+                path = String.format("pictures/cars/%1$s/%2$s/history/%3$s/%4$s.jpg", mUser.adminUid, mCar.plate, mAssignment.start,
+                        String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));
+                showImage(downloadPath, picId, path);
                 break;
         }
     }
@@ -491,6 +591,34 @@ public class ExteriorFragment extends Fragment {
         beginDownload(String.format(mainPath + getResources().getString(R.string.filename_mainpic1) + ".jpg", mCar.plate), "car");
     }
 
+
+    public void setTagImages(String picId) {
+
+        switch (picId) {
+            case "frontPicDialog":
+                mFrontPic.setTag(false);
+                break;
+            case "rearPicDialog":
+                mRearPic.setTag(false);
+                break;
+            case "leftPicDialog":
+                mLeftPic.setTag(false);
+                break;
+            case "rightPicDialog":
+                mRightPic.setTag(false);
+                break;
+            case "crashPicDialog":
+                mCrashPic.setTag(false);
+                break;
+            case "scratchPicDialog":
+                mScratchPic.setTag(false);
+                break;
+            case "carDialog":
+                mMainPic.setTag(false);
+                break;
+        }
+    }
+
     public void writeExteriorCheck() {
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("exterior");
         mDatabaseCheck.setValue(mExterior);
@@ -505,7 +633,7 @@ public class ExteriorFragment extends Fragment {
                 // Get Exterior object and use the values to update the UI
 
                 mExterior = dataSnapshot.getValue(Exterior.class);
-                //mCrash = dataSnapshot.child("crash").getValue(Crash.class);
+                mExteriorCopy = dataSnapshot.getValue(Exterior.class);
 
                 if (mExterior == null) {
 
@@ -544,9 +672,42 @@ public class ExteriorFragment extends Fragment {
         mDatabaseCheck.addListenerForSingleValueEvent(reFuelListener);
     }
 
+    public void deleteImage(String fileName) {
+        // Kick off DeleteService to download the file
+        Intent intent = new Intent(getContext(), DeleteService.class)
+                .putExtra(DeleteService.EXTRA_DELETE_PATH, fileName)
+                .setAction(DeleteService.ACTION_DELETE);
+        getActivity().startService(intent);
+
+        // Show loading spinner
+        showProgressDialog();
+    }
+
+    public void showImage(final String downloadPath, final String picId, final String path) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteImage(path);
+                setTagImages(picId);
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ImageView image = (ImageView) dialogLayout.findViewById(R.id.goProDialogImage);
+        Picasso.with(getContext()).load(downloadPath).into(image);
+
+        dialog.show();
+    }
+
     public void showFAB() {
         mDoneButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
         mDoneButton.setClickable(true);
+        mCancelButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
+        mCancelButton.setClickable(true);
     }
 
     @Override

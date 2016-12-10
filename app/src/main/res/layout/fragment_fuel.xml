@@ -263,6 +263,19 @@
         android:textStyle="bold"/>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_fuel_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/car_info_fuel"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:backgroundTint="@color/bpRed"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/ic_clear_white_24dp" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_fuel_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -271,7 +284,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/fab_margin"
         android:visibility="invisible"
-        app:backgroundTint="@color/bpRed"
+        app:backgroundTint="@color/colorGreen"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         android:src="@drawable/ic_done_white_24dp" />

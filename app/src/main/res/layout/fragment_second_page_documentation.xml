@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             app:layout_widthPercent="80%"
+            android:focusable="false"
             android:textSize="21sp"
             android:textIsSelectable="false"
             android:textStyle="bold"

@@ -120,7 +120,7 @@ public class DocumentationFragment extends Fragment {
                     firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
                     return firstPageDocumentationFragment;
                 case 1:
-                    secondPageDocumentationFragment = SecondPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
+                    secondPageDocumentationFragment = SecondPageDocumentationFragment.newInstance(mUser, mCar);
                     return secondPageDocumentationFragment;
                 default:
                     firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);

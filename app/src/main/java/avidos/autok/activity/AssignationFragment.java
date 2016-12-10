@@ -84,6 +84,7 @@ public class AssignationFragment extends Fragment {
     // FireBase
     private DatabaseReference mOriginDatabase;
     private DatabaseReference mDestinyDatabase;
+    private DatabaseReference mOtherDestinyDatabase;
 
     // Storage
     private BroadcastReceiver mBroadcastReceiver;
@@ -386,12 +387,14 @@ public class AssignationFragment extends Fragment {
     public void reAssignCar() {
 
         mDestinyDatabase = FirebaseDatabase.getInstance().getReference().child("car_history").child(mUser.adminUid).child(mCar.plate).child(mAssignment.start.toString());
+        mOtherDestinyDatabase = FirebaseDatabase.getInstance().getReference().child("user_history").child(mUser.adminUid).child(uid).child(mAssignment.start.toString());
         mOriginDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment");
-        ValueEventListener reFuelListener = new ValueEventListener() {
+        ValueEventListener reAssignCarListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 mDestinyDatabase.setValue(dataSnapshot.getValue());
+                mOtherDestinyDatabase.setValue(dataSnapshot.getValue());
                 mOriginDatabase.removeValue();
                 updateUser();
             }
@@ -402,7 +405,7 @@ public class AssignationFragment extends Fragment {
                 Log.w("__load__", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        mOriginDatabase.addListenerForSingleValueEvent(reFuelListener);
+        mOriginDatabase.addListenerForSingleValueEvent(reAssignCarListener);
     }
 
     private void updateUser() {
@@ -417,7 +420,8 @@ public class AssignationFragment extends Fragment {
 
         mOriginDatabase.updateChildren(childUpdates);
 
-        getFragmentManager().popBackStackImmediate("MainFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getFragmentManager().popBackStack("MainFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getFragmentManager().beginTransaction().replace(R.id.content_main, MainFragment.newInstance(), "MainFragment").commit();
     }
 
     /**

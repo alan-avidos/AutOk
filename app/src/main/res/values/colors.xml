@@ -8,4 +8,6 @@
     <color name="colorAppWhiteText">#FFFFFF</color>
     <color name="colorAppGrayText">#303030</color>
     <color name="colorBgAppGray">#20303030</color>
+    <color name="colorGreen">#139100</color>
+
 </resources>

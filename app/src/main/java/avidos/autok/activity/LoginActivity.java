@@ -288,7 +288,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+            if (success) showProgress(true);
+            else showProgress(false);
         }
 
         @Override

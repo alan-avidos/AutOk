@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,11 @@ import android.widget.Toast;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,9 +31,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import avidos.autok.R;
+import avidos.autok.entity.AC;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
+import avidos.autok.entity.Interior;
+import avidos.autok.entity.Mat;
+import avidos.autok.entity.Radio;
+import avidos.autok.entity.Seats;
 import avidos.autok.entity.User;
+import avidos.autok.entity.WarningLights;
 import avidos.autok.helper.OnPageCommunication;
 
 /**
@@ -79,12 +89,11 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
      * @return A new instance of fragment FirstPageDocumentationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SecondPageDocumentationFragment newInstance(User user, Cars car, @Nullable Assignment assignment) {
+    public static SecondPageDocumentationFragment newInstance(User user, Cars car) {
         SecondPageDocumentationFragment fragment = new SecondPageDocumentationFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, car);
         args.putSerializable(ARG_USER, user);
-        args.putSerializable(ARG_ASSIGNMENT, assignment);
         fragment.setArguments(args);
         return fragment;
     }
@@ -95,7 +104,6 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         if (getArguments() != null) {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
-            mAssignment = (Assignment) getArguments().getSerializable(ARG_ASSIGNMENT);
         }
     }
 
@@ -112,6 +120,8 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         mExpirationView = (EditText) view.findViewById(R.id.edittext_expiration);
         mTelephoneView = (EditText) view.findViewById(R.id.edittext_telephone);
         mFinishButton = (Button) view.findViewById(R.id.finish_button);
+
+        readAssignment();
 
         mAssuranceView.setText(mCar.insuranceCompany);
         mPoliceNumberView.setText(mCar.engineNumber);
@@ -146,6 +156,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         switch (v.getId()) {
 
             case R.id.edittext_timeofuse:
+                mTimeOfUseView.setFocusable(false);
                 CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
                         .setOnDateSetListener(this);
                 cdp.show(getFragmentManager(), FRAG_TAG_DATE_PICKER);
@@ -193,6 +204,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         View focusView = null;
 
         if (TextUtils.isEmpty(timeofuse)) {
+            mTimeOfUseView.setFocusable(true);
             mTimeOfUseView.setError(getString(R.string.error_field_required));
             focusView = mTimeOfUseView;
             cancel = true;
@@ -248,6 +260,36 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
 
         mDatabase.updateChildren(childUpdates);
     }
+
+    public void readAssignment() {
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment");
+        ValueEventListener reFuelListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Exterior object and use the values to update the UI
+
+                mAssignment = dataSnapshot.getValue(Assignment.class);
+
+                if (mAssignment.destination.length() > 0) {
+                    mDestinationView.setText(mAssignment.destination);
+                } else if (mAssignment.end > 0) {
+                    mTimeOfUseView.setText(getDate(mAssignment.end));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Exterior failed, log a message
+                // Getting Exterior failed, log a message
+                Log.w("__load__", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.addListenerForSingleValueEvent(reFuelListener);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
