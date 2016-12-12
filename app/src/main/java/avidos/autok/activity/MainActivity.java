@@ -14,6 +14,9 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import avidos.autok.R;
 
 public class MainActivity extends AppCompatActivity
@@ -149,6 +152,8 @@ public class MainActivity extends AppCompatActivity
             mFragmentInteraction[1] = true;
         } else if (fragment.equals("FuelFragment")) {
             mFragmentInteraction[2] = true;
+        } else if (fragment.equals("Reset")) {
+            Arrays.fill(mFragmentInteraction, false);
         }
     }
 
