@@ -7,8 +7,8 @@ android {
         applicationId "avidos.autok"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 10
-        versionName "1.71"
+        versionCode 18
+        versionName "1.88"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -31,7 +31,6 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:10.0.0'
     compile 'com.google.firebase:firebase-database:10.0.0'
     compile 'com.android.support:percent:24.2.1'
-    compile 'testfairy:testfairy-android-sdk:1.+@aar'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
