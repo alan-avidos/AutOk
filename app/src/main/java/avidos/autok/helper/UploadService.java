@@ -52,7 +52,7 @@ public class UploadService extends BaseTaskService {
         super.onCreate();
 
         // [START get_storage_ref]
-        mStorageRef = FirebaseStorage.getInstance().getReference().child("pictures");
+        mStorageRef = FirebaseStorage.getInstance().getReference().child("pictures").child("users");
         // [END get_storage_ref]
     }
 

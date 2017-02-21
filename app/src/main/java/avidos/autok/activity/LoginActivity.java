@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +31,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import avidos.autok.R;
 
@@ -49,12 +55,16 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private TextInputLayout mEmailViewRoot;
+    private TextInputLayout mPasswordViewRoot;
+    private TextView mForgotPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
     // FireBase references.
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +79,25 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailViewRoot = (TextInputLayout) findViewById(R.id.user);
+
+        mForgotPasswordView = (TextView) findViewById(R.id.forgot_password_label);
+        mForgotPasswordView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ResetPasswordDialog dialog = new ResetPasswordDialog();
+                dialog.show(getSupportFragmentManager(), "ResetPasswordDialog");
+            }
+        });
 
         mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordViewRoot = (TextInputLayout) findViewById(R.id.passwrd);
+
+        mEmailViewRoot.setHintAnimationEnabled(false);
+        mPasswordViewRoot.setHintAnimationEnabled(false);
+        mEmailViewRoot.setHintEnabled(false);
+        mPasswordViewRoot.setHintEnabled(false);
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -101,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    //isUserAdmin(user.getUid());
                     Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -237,6 +265,37 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    private void isUserAdmin(final String uid) {
+        try {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(uid);
+        } catch (NullPointerException npe) {
+            return;
+        }
+
+        final ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()) {
+                    Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_in:" + uid);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    LoginActivity.this.startActivity(intent);
+                } else {
+                    mEmailView.setError(getString(R.string.error_incorrect_user));
+                    mEmailView.requestFocus();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("__tag__", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        mDatabase.addListenerForSingleValueEvent(postListener);
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -266,7 +325,7 @@ public class LoginActivity extends AppCompatActivity {
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
                                 Log.w(FIREBASE_AUTH_TAG, "signInWithEmail:failed", task.getException());
-
+                                showProgress(false);
                                 try {
                                     throw task.getException();
                                 }catch(FirebaseAuthInvalidCredentialsException e) {
@@ -278,6 +337,8 @@ public class LoginActivity extends AppCompatActivity {
                                 } catch(Exception e) {
                                     Log.e(FIREBASE_AUTH_TAG, e.getMessage());
                                 }
+                            } else {
+                                showProgress(true);
                             }
                         }
                     });
@@ -288,8 +349,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            if (success) showProgress(true);
-            else showProgress(false);
+            //showProgress(mSuccess);
         }
 
         @Override

@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,8 +40,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,6 +77,7 @@ public class ExteriorFragment extends Fragment {
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
     private static final String ARG_ASSIGNMENT = "assignment";
+    private static final String ARG_ASSIGNED = "assigned";
 
     private static final String TAG = "Storage#MainActivity";
 
@@ -80,6 +87,7 @@ public class ExteriorFragment extends Fragment {
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
 
+    // Entities
     private User mUser;
     private Cars mCar;
     private Assignment mAssignment;
@@ -88,6 +96,10 @@ public class ExteriorFragment extends Fragment {
     private Crash mCrash;
     private Scratch mScratch;
     private Boolean mIsRatingModified = false;
+    private Boolean mIsAssigned;
+    private Boolean mAllImagesUploaded = false;
+    private File dir;
+    private File file;
     // UI
     private CircleImageView mMainPic;
     private CircleImageView mFrontPic;
@@ -106,14 +118,14 @@ public class ExteriorFragment extends Fragment {
     // FireBase
     private DatabaseReference mDatabaseCheck;
 
+    // Storage
     private BroadcastReceiver mBroadcastReceiver;
     private ProgressDialog mProgressDialog;
-
     private Uri mDownloadUrl = null;
     private Uri mFileUri = null;
-
     private String mFileName = null;
 
+    // Listeners
     private OnFragmentInteractionListener mListener;
 
     public ExteriorFragment() {
@@ -127,12 +139,13 @@ public class ExteriorFragment extends Fragment {
      * @return A new instance of fragment ExteriorFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExteriorFragment newInstance(User user, Cars car, Assignment assignment) {
+    public static ExteriorFragment newInstance(User user, Cars car, Assignment assignment, boolean isAssigned) {
         ExteriorFragment fragment = new ExteriorFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, car);
         args.putSerializable(ARG_USER, user);
         args.putSerializable(ARG_ASSIGNMENT, assignment);
+        args.putSerializable(ARG_ASSIGNED, isAssigned);
         fragment.setArguments(args);
         return fragment;
     }
@@ -144,6 +157,7 @@ public class ExteriorFragment extends Fragment {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
             mAssignment = (Assignment) getArguments().getSerializable(ARG_ASSIGNMENT);
+            mIsAssigned = getArguments().getBoolean(ARG_ASSIGNED);
         }
     }
 
@@ -173,6 +187,26 @@ public class ExteriorFragment extends Fragment {
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_exterior_done);
         mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_exterior_cancel);
 
+        mFrontPic.setTag(false);
+        mRearPic.setTag(false);
+        mLeftPic.setTag(false);
+        mRightPic.setTag(false);
+
+        readExteriorCheck();
+
+        // if the assignation form has already finished, avoid modifications.
+        if (mIsAssigned) {
+            mRating.setEnabled(false);
+            //mFrontPic.setEnabled(false);
+            //mRearPic.setEnabled(false);
+            //mLeftPic.setEnabled(false);
+            //mRightPic.setEnabled(false);
+            //mScratchPic.setEnabled(false);
+            //mCrashPic.setEnabled(false);
+            mScratchSwitch.setClickable(false);
+            mCrashSwitch.setClickable(false);
+        }
+
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,8 +226,7 @@ public class ExteriorFragment extends Fragment {
         mRating.setSeekPinByValue(0);
 
         mCarInfoView.setText(getString(R.string.title_car_info, mCar.brand, mCar.model, mCar.plate));
-
-        readExteriorCheck();
+        mCarInfoView.setSelected(true);
 
         mRating.setOnRangeBarChangeListener(onRangeBarChangeListener);
         mCrashSwitch.setOnCheckedChangeListener(onCheckedChangeListener);
@@ -216,21 +249,24 @@ public class ExteriorFragment extends Fragment {
 
                 switch (intent.getAction()) {
                     case DownloadService.DOWNLOAD_COMPLETED:
-                        // Get number of bytes downloaded
-                        //long numBytes = intent.getLongExtra(DownloadService.EXTRA_BYTES_DOWNLOADED, 0);
                         String picId = intent.getStringExtra(DownloadService.EXTRA_PICTURE_ID);
                         String downloadPath = intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH);
                         updateCircleImageViews(picId, downloadPath);
-
+                        if(mIsRatingModified && getTagImages()) {
+                            showFAB();
+                            mListener.onFragmentInteraction("ExteriorFragment");
+                        }
+                        writeExteriorImage(picId);
                         break;
                     case DownloadService.DOWNLOAD_ERROR:
-                        // Alert failure
+                        // Not Alert failure
 /*                        showMessageDialog("Error", String.format(Locale.getDefault(),
                                 "Failed to download from %s",
                                 intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH)));*/
                         break;
                     case UploadService.UPLOAD_COMPLETED:
                         downloadImages();
+
                     case UploadService.UPLOAD_ERROR:
                         onUploadResultIntent(intent);
                         break;
@@ -269,7 +305,25 @@ public class ExteriorFragment extends Fragment {
         if (requestCode == RC_TAKE_PICTURE) {
             if (resultCode == RESULT_OK) {
                 if (mFileUri != null) {
-                    uploadFromUri(mFileUri);
+
+                    Bitmap bMap= BitmapFactory.decodeFile(file.getAbsolutePath());
+                    Bitmap out = Bitmap.createScaledBitmap(bMap, 500, 500, false);
+                    File resizedFile = new File(dir, "resize.png");
+
+
+                    OutputStream fOut = null;
+                    try {
+                        fOut = new BufferedOutputStream(new FileOutputStream(resizedFile));
+                        out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                        fOut.flush();
+                        fOut.close();
+                        bMap.recycle();
+                        out.recycle();
+
+                    } catch (Exception e) {
+
+                    }
+                    uploadFromUri(Uri.fromFile(resizedFile));
                 } else {
                     Log.w(TAG, "File URI is null");
                 }
@@ -303,6 +357,11 @@ public class ExteriorFragment extends Fragment {
                 .setAction(UploadService.ACTION_UPLOAD));
     }
 
+    /**
+     * Instantiate a service to get image link.
+     * @param fileName The name of the file.
+     * @param picId The image id.
+     */
     private void beginDownload(String fileName, String picId) {
         // Kick off MyDownloadService to download the file
         Intent intent = new Intent(getContext(), DownloadService.class)
@@ -329,8 +388,8 @@ public class ExteriorFragment extends Fragment {
         }
 
         // Choose file storage location, must be listed in res/xml/file_paths.xml
-        File dir = new File(Environment.getExternalStorageDirectory() + "/photos");
-        File file = new File(dir, UUID.randomUUID().toString() + ".jpg");
+        dir = new File(Environment.getExternalStorageDirectory() + "/photos");
+        file = new File(dir, UUID.randomUUID().toString() + ".jpg");
         try {
             // Create directory if it does not exist.
             if (!dir.exists()) {
@@ -366,17 +425,9 @@ public class ExteriorFragment extends Fragment {
 
 
     private void onUploadResultIntent(Intent intent) {
-        // Got a new intent from MyUploadService with a success or failure
+        // Got a new intent from UploadService with a success or failure
         mDownloadUrl = intent.getParcelableExtra(UploadService.EXTRA_DOWNLOAD_URL);
         mFileUri = intent.getParcelableExtra(UploadService.EXTRA_FILE_URI);
-    }
-
-    private void showMessageDialog(String title, String message) {
-        AlertDialog ad = new AlertDialog.Builder(getContext())
-                .setTitle(title)
-                .setMessage(message)
-                .create();
-        ad.show();
     }
 
     private void showProgressDialog() {
@@ -404,6 +455,8 @@ public class ExteriorFragment extends Fragment {
     View.OnClickListener onImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // If an image has already taken, show a dialog with it.
+            // If not take a photo.
             Boolean tag;
             if (v.getTag() != null) {
                 tag = v.getTag().equals(true);
@@ -473,7 +526,7 @@ public class ExteriorFragment extends Fragment {
                     }
                     break;
                 case R.id.car_image_exterior:
-                        mFileName = String.format(getResources().getString(R.string.filename_mainpic1), mCar.plate);
+                        mFileName = getResources().getString(R.string.filename_mainpic1);
                     break;
                 default:
                     break;
@@ -482,6 +535,9 @@ public class ExteriorFragment extends Fragment {
         }
     };
 
+    /**
+     * Update switches.
+     */
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -500,19 +556,27 @@ public class ExteriorFragment extends Fragment {
         }
     };
 
+    /**
+     * Update RangeBar.
+     */
     RangeBar.OnRangeBarChangeListener onRangeBarChangeListener = new RangeBar.OnRangeBarChangeListener() {
         @Override
         public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-            if(!mIsRatingModified) {
+            if(getTagImages()) {
                 showFAB();
-                mIsRatingModified = true;
                 mListener.onFragmentInteraction("ExteriorFragment");
             }
+            mIsRatingModified = true;
             mExterior.rating = Long.valueOf(rightPinValue);
             writeExteriorCheck();
         }
     };
 
+    /**
+     * Load images gotten from FireBase.
+     * @param picId An id to know what image is.
+     * @param downloadPath Link of the image alocated in FireBase.
+     */
     public void updateCircleImageViews(String picId, String downloadPath) {
         String path;
         switch (picId) {
@@ -578,6 +642,9 @@ public class ExteriorFragment extends Fragment {
         }
     }
 
+    /**
+     * To download all images at the same time.
+     */
     public void downloadImages() {
 
         String historyPath = String.format("pictures/cars/%1$s/%2$s/history/%3$s/", mUser.adminUid, mCar.plate, mAssignment.start.toString());
@@ -588,10 +655,13 @@ public class ExteriorFragment extends Fragment {
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_rightpic) + ".jpg", mCar.plate), "rightPic");
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_crashpic) + ".jpg", mCar.plate), "crashPic");
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_scratchpic) + ".jpg", mCar.plate), "scratchPic");
-        beginDownload(String.format(mainPath + getResources().getString(R.string.filename_mainpic1) + ".jpg", mCar.plate), "car");
+        beginDownload(mainPath + getResources().getString(R.string.filename_mainpic1) + ".jpg", "car");
     }
 
-
+    /**
+     * To know if an image is already uploaded.
+     * @param picId The image id.
+     */
     public void setTagImages(String picId) {
 
         switch (picId) {
@@ -619,11 +689,51 @@ public class ExteriorFragment extends Fragment {
         }
     }
 
+    /**
+     * To know if all images were uploaded
+     */
+    public boolean getTagImages() {
+
+        return mFrontPic.getTag().equals(true) && mRearPic.getTag().equals(true) &&
+                mLeftPic.getTag().equals(true) && mRightPic.getTag().equals(true);
+    }
+
+    /**
+     * Write assignment exterior check on FireBase.
+     */
     public void writeExteriorCheck() {
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("exterior");
         mDatabaseCheck.setValue(mExterior);
     }
 
+    /**
+     * Write assignment exterior check on FireBase.
+     */
+    public void writeExteriorImage(String picId) {
+
+        switch (picId) {
+
+            case "frontPic":
+                mExterior.pic1 = String.format(getResources().getString(R.string.filename_frontpic), mCar.plate);
+                break;
+            case "rearPic":
+                mExterior.pic2 = String.format(getResources().getString(R.string.filename_rearpic), mCar.plate);
+                break;
+            case "leftPic":
+                mExterior.pic3 = String.format(getResources().getString(R.string.filename_leftpic), mCar.plate);
+                break;
+            case "rightPic":
+                mExterior.pic4 = String.format(getResources().getString(R.string.filename_rightpic), mCar.plate);
+                break;
+        }
+
+        mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("exterior");
+        mDatabaseCheck.setValue(mExterior);
+    }
+
+    /**
+     * Read assignment exterior check data (if exists).
+     */
     public void readExteriorCheck() {
 
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("exterior");
@@ -647,13 +757,21 @@ public class ExteriorFragment extends Fragment {
                             String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));
 
-                    mExterior = new Exterior(String.format(getResources().getString(R.string.filename_frontpic), mCar.plate),
+                    mExterior = new Exterior(null,
+                            null,
+                            null,
+                            null,
+                            0L,
+                            mCrash,
+                            mScratch);
+
+/*                    mExterior = new Exterior(String.format(getResources().getString(R.string.filename_frontpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_rearpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_leftpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_rightpic), mCar.plate),
                             0L,
                             mCrash,
-                            mScratch);
+                            mScratch);*/
                 } else {
                     mScratchSwitch.setChecked(mExterior.scratch.accepted);
                     mCrashSwitch.setChecked(mExterior.crash.accepted);
@@ -672,6 +790,10 @@ public class ExteriorFragment extends Fragment {
         mDatabaseCheck.addListenerForSingleValueEvent(reFuelListener);
     }
 
+    /**
+     * Instantiate a service to delete an image from FireBase.
+     * @param fileName
+     */
     public void deleteImage(String fileName) {
         // Kick off DeleteService to download the file
         Intent intent = new Intent(getContext(), DeleteService.class)
@@ -683,15 +805,22 @@ public class ExteriorFragment extends Fragment {
         showProgressDialog();
     }
 
+    /**
+     * To display a dialog with an image.
+     * @param downloadPath The link to the image in FireBase.
+     */
     public void showImage(final String downloadPath, final String picId, final String path) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deleteImage(path);
-                setTagImages(picId);
-            }
-        });
+
+        if (!mIsAssigned) {
+            builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    deleteImage(path);
+                    setTagImages(picId);
+                }
+            });
+        }
         final AlertDialog dialog = builder.create();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
@@ -703,6 +832,9 @@ public class ExteriorFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Show a Floating Action Button when completed obligatory fields.
+     */
     public void showFAB() {
         mDoneButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_open));
         mDoneButton.setClickable(true);

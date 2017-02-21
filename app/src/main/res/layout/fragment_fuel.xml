@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         app:layout_heightPercent="5%"
         app:layout_marginBottomPercent="2%"
-        android:textSize="21sp"
+        android:textSize="19sp"
         android:textColor="@color/colorAppWhiteText"
         android:background="@color/colorAppOrange"
         android:gravity="center"
@@ -23,11 +23,17 @@
         android:id="@+id/car_info_fuel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_marginTopPercent="2%"
-        app:layout_heightPercent="7%"
+        app:layout_marginTopPercent="1%"
+        app:layout_heightPercent="8%"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit ="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scrollHorizontally="true"
         android:layout_below="@id/fuel_title"
         android:textColor="@color/colorAppGrayText"
-        android:textSize="21sp"
+        android:textSize="19sp"
         android:gravity="center"
         android:textStyle="bold" />
 
@@ -162,6 +168,19 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/car_info_refuel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_marginTopPercent="2%"
+        app:layout_heightPercent="6%"
+        android:layout_below="@id/km_picker"
+        android:text="@string/subtitle_refuel"
+        android:textColor="@color/colorAppGrayText"
+        android:textSize="19sp"
+        android:gravity="center"
+        android:textStyle="bold" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/liters_layout"
         android:layout_width="wrap_content"
@@ -169,7 +188,7 @@
         app:layout_widthPercent="70%"
         app:layout_marginTopPercent="2%"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/km_picker">
+        android:layout_below="@+id/car_info_refuel">
 
         <EditText
             android:layout_width="match_parent"
@@ -237,7 +256,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_widthPercent="30%"
-        app:layout_heightPercent="8%"
+        app:layout_heightPercent="6%"
         app:layout_marginLeftPercent="18%"
         app:layout_marginBottomPercent="2%"
         android:layout_alignParentBottom="true"
@@ -252,7 +271,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_widthPercent="30%"
-        app:layout_heightPercent="8%"
+        app:layout_heightPercent="6%"
         app:layout_marginRightPercent="18%"
         app:layout_marginBottomPercent="2%"
         android:layout_alignParentBottom="true"

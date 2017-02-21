@@ -11,32 +11,515 @@
         android:layout_height="match_parent"
         app:layout_heightPercent="5%"
         android:textColor="@color/colorAppWhiteText"
-        android:textSize="21sp"
+        android:textSize="19sp"
         android:background="@color/colorAppOrange"
         android:gravity="center"
         android:textStyle="bold"
         android:text="@string/title_documentation" />
 
-    <android.support.v4.view.ViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager"
+    <ScrollView
+        android:id="@+id/scroll"
         android:layout_below="@+id/documentation_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background"/>
+        android:fillViewport="true">
 
-    <com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/indicator"
-        android:padding="10dip"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent"
-        app:radius="6dp"
-        app:fillColor="#FF303030"
-        app:pageColor="#88a5a5a5"
-        app:strokeColor="#FF000000"
-        app:strokeWidth="1dp"
-        />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_destination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack">
+
+                <EditText
+                    android:id="@+id/edittext_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:hint="@string/hint_destination"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_timeofuse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:layout_below="@id/layout_destination">
+
+                <EditText
+                    android:id="@+id/edittext_timeofuse"
+                    android:layout_below="@+id/edittext_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:focusable="false"
+                    android:textSize="21sp"
+                    android:textIsSelectable="false"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:hint="@string/hint_timeofuse"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <FrameLayout
+                android:id="@+id/vehicle_subtitle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_timeofuse">
+
+                <TextView
+                    android:id="@+id/vehicle_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAppGrayText"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:text="@string/subtitle_vehicle" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_black_24dp"
+                    android:layout_gravity="end"
+                    android:paddingRight="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingStart="25dp"
+                    android:paddingLeft="25dp"/>
+
+            </FrameLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_brand"
+                android:layout_below="@+id/vehicle_subtitle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_brand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:hint="@string/hint_brand"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_subbrand"
+                android:layout_below="@+id/layout_brand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+
+                <EditText
+                    android:id="@+id/edittext_subbrand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_subbrand"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_type"
+                android:layout_below="@+id/layout_subbrand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+
+                <EditText
+                    android:id="@+id/edittext_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_type"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_model"
+                android:layout_below="@+id/layout_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_model"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_model"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_color"
+                android:layout_below="@+id/layout_model"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_color"
+                    android:layout_below="@+id/layout_model"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_color"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_plate"
+                android:layout_below="@+id/layout_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_plate"
+                    android:layout_below="@+id/layout_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_plate"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <FrameLayout
+                android:id="@+id/possession_subtitle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_plate">
+
+                <TextView
+                    android:id="@+id/possession_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAppGrayText"
+                    android:textSize="24sp"
+                    android:gravity="center_horizontal|top"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/subtitle_possession" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_black_24dp"
+                    android:layout_gravity="end"
+                    android:paddingRight="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingStart="25dp"
+                    android:paddingLeft="25dp"/>
+
+            </FrameLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_user"
+                android:layout_below="@+id/possession_subtitle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_user"
+                    android:layout_below="@+id/possession_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_user"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_datetime"
+                android:layout_below="@+id/layout_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_datetime"
+                    android:layout_below="@+id/edittext_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textIsSelectable="false"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:hint="@string/hint_datetime"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <FrameLayout
+                android:id="@+id/assurance_subtitle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_datetime">
+
+                <TextView
+                    android:id="@+id/assurance_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAppGrayText"
+                    android:textSize="24sp"
+                    android:gravity="center_horizontal|top"
+                    android:textStyle="bold"
+                    android:text="@string/subtitle_assurance"
+                    android:layout_marginTop="10dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_black_24dp"
+                    android:layout_gravity="end"
+                    android:paddingRight="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingStart="25dp"
+                    android:paddingLeft="25dp"/>
+
+            </FrameLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_assurance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/assurance_subtitle_layout"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_assurance"
+                    android:layout_below="@+id/assurance_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_marginTopPercent="5%"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_assurance"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_policenumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_assurance"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_policenumber"
+                    android:layout_below="@+id/edittext_assurance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_policenumber"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText"
+                    android:inputType="number" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_expiration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_policenumber"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_expiration"
+                    android:layout_below="@+id/edittext_policenumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_expiration"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_telephone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_expiration"
+                android:layout_centerHorizontal="true"
+                android:theme="@style/EditTextHintBlack"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edittext_telephone"
+                    android:layout_below="@+id/edittext_expiration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="21sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:hint="@string/hint_telephone"
+                    android:theme="@style/EditTextHintBlack"
+                    android:textColor="@color/colorAppGrayText"
+                    android:inputType="phone" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/cancel_assignation_button"
+                style="?android:textAppearanceSmall"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/rounded_border_button"
+                android:layout_width="400dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@id/layout_telephone"
+                android:text="@string/action_cancel"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/finish_button"
+                style="?android:textAppearanceSmall"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/rounded_border_button"
+                android:layout_width="400dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/cancel_assignation_button"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/action_finish"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </android.support.percent.PercentRelativeLayout>

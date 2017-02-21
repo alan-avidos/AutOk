@@ -1,10 +1,12 @@
 package avidos.autok.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Alan on 11/16/2016.
  */
 
-public class WarningLights {
+public class WarningLights implements Serializable {
 
     public boolean accepted;
     public String pic1;

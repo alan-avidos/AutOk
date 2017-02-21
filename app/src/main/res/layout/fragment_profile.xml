@@ -86,28 +86,6 @@
             android:id="@+id/editText_user" />
 
         <TextView
-            android:id="@+id/password_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textColor="@color/colorAppOrange"
-            android:text="@string/profile_password" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:textSize="14sp"
-            android:theme="@style/EditTextHintBlack"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:id="@+id/editText_password"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="textPassword" />
-
-        <TextView
             android:id="@+id/phone_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -128,10 +106,10 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/cancel_button"
+        android:id="@+id/reset_button"
         style="?android:textAppearanceSmall"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_border"
+        android:background="@drawable/rounded_border_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
@@ -139,6 +117,20 @@
         app:layout_heightPercent="10%"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="10dp"
+        android:text="@string/action_reset_password"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="?android:textAppearanceSmall"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_widthPercent="75%"
+        app:layout_heightPercent="10%"
+        android:layout_marginTop="10dp"
+        android:layout_above="@id/reset_button"
         android:text="@string/action_cancel"
         android:textStyle="bold"
         android:enabled="false"/>

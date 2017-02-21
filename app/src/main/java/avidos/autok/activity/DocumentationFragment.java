@@ -3,8 +3,6 @@ package avidos.autok.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import avidos.autok.R;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.User;
-import avidos.autok.helper.OnPageCommunication;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,44 +92,9 @@ public class DocumentationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_documentation, container, false);
-        // Instantiate a ViewPager and a PagerAdapter.
-        mPager = (ViewPager) view.findViewById(R.id.pager);
-        mIndicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
-        mPagerAdapter = new ScreenSlidePagerAdapter(getFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
-        mIndicator.setViewPager(mPager);
         return view;
     }
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
-                    return firstPageDocumentationFragment;
-                case 1:
-                    secondPageDocumentationFragment = SecondPageDocumentationFragment.newInstance(mUser, mCar);
-                    return secondPageDocumentationFragment;
-                default:
-                    firstPageDocumentationFragment = FirstPageDocumentationFragment.newInstance(mUser, mCar, mAssignment);
-                    return firstPageDocumentationFragment;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-    }
 
     @Override
     public void onAttach(Context context) {

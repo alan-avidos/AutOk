@@ -3,6 +3,7 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email"><i>Usuario</i></string>
+    <string name="prompt_mail"><i>Correo</i></string>
     <string name="prompt_password"><i>Contraseña</i></string>
     <string name="action_sign_in">Ingresar</string>
     <string name="action_finish">Finalizar</string>
@@ -11,20 +12,28 @@
     <string name="action_available">Disponibles</string>
     <string name="action_delete">Eliminar</string>
     <string name="action_next">Próximos</string>
+    <string name="action_accept">Aceptar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="action_reset_password">Restablecer la contraseña</string>
+    <string name="action_send_email">Enviar correo</string>
+    <string name="action_update_password">Actualizar mi contraseña</string>
     <string name="error_invalid_email">Este email está en un formato inválido</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
     <string name="error_incorrect_password">Contraseña incorrecta</string>
     <string name="error_incorrect_email">El email no está registrado</string>
+    <string name="error_incorrect_user">Este usuario es un administrador</string>
     <string name="error_field_required">Este campo es obligatorio.</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
     <string name="auth_failed">"Credenciales incorrectas."</string>
-    <string name="reauth">"Por favor vuelva a iniciar sesión."</string>
+    <string name="reset_password">"Escriba su email, le mandaremos un correo con la información acerca de como restablecer la contraseña."</string>
     <string name="no_account">No tienes cuenta? <u>Regístrate</u>.</string>
+    <string name="forgot_password">Olvidé la contraseña.</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="alert_cancel">¿Estás seguro de cancelar?, pueden aplicar acciones administrativas.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -34,7 +43,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="radial_time_picker_result_value">%1$02d:%2$02d</string>
-    <string name="date_picker_result_value">%1$s/%2$s/%3$s</string>
+    <string name="date_picker_result_value">%1$02d/%2$02d/%3$s</string>
 
     <string name="title_profile">Perfil</string>
     <string name="profile_name">Nombre</string>
@@ -48,6 +57,7 @@
     <string name="title_car_info">%1$s %2$s Placas %3$s</string>
 
     <string name="title_fuel">Combustible / Odómetro</string>
+    <string name="subtitle_refuel">Carga de combustible</string>
 
     <string name="title_new_assignation">Mi asignación</string>
 
@@ -83,9 +93,9 @@
     <string name="interior_radio">Radio/Estéreo</string>
     <string name="interior_mat">Tapetes completos</string>
 
-    <string name="filename_mainpic1">%1$s-pic1</string>
-    <string name="filename_mainpic2">%1$s-pic2</string>
-    <string name="filename_mainpic3">%1$s-pic3</string>
+    <string name="filename_mainpic1">pic1</string>
+    <string name="filename_mainpic2">pic2</string>
+    <string name="filename_mainpic3">pic3</string>
 
     <string name="filename_frontpic">%1$s_pic1</string>
     <string name="filename_rearpic">%1$s_pic2</string>
@@ -126,7 +136,7 @@
 
     <string-array name="service_array_en">
         <item>allowedUse</item>
-        <item>external</item>
+        <item>exterior</item>
         <item>local</item>
     </string-array>
 

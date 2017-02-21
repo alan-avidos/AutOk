@@ -1,12 +1,16 @@
 package avidos.autok.activity;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Cache;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -35,13 +40,14 @@ import java.util.Map;
 import avidos.autok.R;
 import avidos.autok.adapter.OptionsAdapter;
 import avidos.autok.entity.Assignment;
+import avidos.autok.entity.AssignmentHistory;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.User;
+import avidos.autok.entity.UserHistory;
 import avidos.autok.helper.DownloadService;
 import avidos.autok.helper.ItemClickSupport;
 import avidos.autok.helper.UploadService;
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,18 +57,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Use the {@link AssignationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AssignationFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class AssignationFragment extends Fragment implements CancelDialog.CancelDialogListener {
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
     private static final String ARG_ASSIGNMENT = "assignment";
     private static final String ARG_UID = "uid";
-    //
+
+    // Entities
     private Cars mCar;
     private User mUser;
     private Assignment mAssignment;
     private String uid;
+    private boolean mIsAssigned = false;
 
     // UI
     private TextView mTextViewCarInfo;
@@ -73,12 +79,15 @@ public class AssignationFragment extends Fragment {
     private CircleImageView mCarPic1;
     private CircleImageView mCarPic2;
     private CircleImageView mCarPic3;
+    private ProgressDialog mProgressDialog;
 
     // Fragments
     private FuelFragment mFuelFragment;
     private ExteriorFragment mExteriorFragment;
     private InteriorFragment mInteriorFragment;
     private DocumentationFragment mDocumentationFragment;
+
+    // Listeners
     private OnFragmentInteractionListener mListener;
 
     // FireBase
@@ -90,12 +99,8 @@ public class AssignationFragment extends Fragment {
     private BroadcastReceiver mBroadcastReceiver;
     private Uri mDownloadUrl = null;
     private Uri mFileUri = null;
-    private static final int RC_TAKE_PICTURE = 101;
-    private static final int RC_STORAGE_PERMS = 102;
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
-
-    private ProgressDialog mProgressDialog;
 
 
     public AssignationFragment() {
@@ -106,10 +111,12 @@ public class AssignationFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param cars Parameter 1.
+     * @param cars Car assigned info.
+     * @param user User logged info.
+     * @param assignment Assignment info.
+     * @param uid User logged info.
      * @return A new instance of fragment AssignationFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AssignationFragment newInstance(Cars cars, User user, Assignment assignment, String uid) {
         AssignationFragment fragment = new AssignationFragment();
         Bundle args = new Bundle();
@@ -145,7 +152,10 @@ public class AssignationFragment extends Fragment {
         mCarPic2 = (CircleImageView) view.findViewById(R.id.car_image_2);
         mCarPic3 = (CircleImageView) view.findViewById(R.id.car_image_3);
 
+        readAssignment();
+
         mTextViewCarInfo.setText(getString(R.string.title_car_info, mCar.brand, mCar.model, mCar.plate));
+        mTextViewCarInfo.setSelected(true);
 
         mCarPic1.setOnClickListener(onImageClickListener);
         mCarPic2.setOnClickListener(onImageClickListener);
@@ -169,23 +179,25 @@ public class AssignationFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
-                //TODO: improve this
+                /**
+                 * OnClick RecyclerView options
+                 */
                 switch (position) {
 
                     case 0:
-                        mExteriorFragment = ExteriorFragment.newInstance(mUser, mCar, mAssignment);
+                        mExteriorFragment = ExteriorFragment.newInstance(mUser, mCar, mAssignment, mIsAssigned);
                         getFragmentManager().beginTransaction().replace(R.id.content_main, mExteriorFragment, "ExteriorFragment").addToBackStack("ExteriorFragment").commit();
                         break;
                     case 1:
-                        mInteriorFragment = InteriorFragment.newInstance(mUser, mCar, mAssignment);
+                        mInteriorFragment = InteriorFragment.newInstance(mUser, mCar, mAssignment, mIsAssigned);
                         getFragmentManager().beginTransaction().replace(R.id.content_main, mInteriorFragment, "InteriorFragment").addToBackStack("InteriorFragment").commit();
                         break;
                     case 2:
-                        mFuelFragment = FuelFragment.newInstance(mUser, mCar);
+                        mFuelFragment = FuelFragment.newInstance(mUser, mCar, mIsAssigned);
                         getFragmentManager().beginTransaction().replace(R.id.content_main, mFuelFragment, "FuelFragment").addToBackStack("FuelFragment").commit();
                         break;
                     case 3:
-                        mDocumentationFragment = DocumentationFragment.newInstance(mUser, mCar, mAssignment);
+                        mDocumentationFragment = DocumentationFragment.newInstance(mUser, mCar, mAssignment, mIsAssigned);
                         getFragmentManager().beginTransaction().replace(R.id.content_main, mDocumentationFragment, "DocumentationFragment").addToBackStack("DocumentationFragment").commit();
                         break;
                 }
@@ -195,7 +207,10 @@ public class AssignationFragment extends Fragment {
         mButtonReasign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reAssignCar();
+                if(!mIsAssigned) {
+                    CancelDialog cancelDialog = new CancelDialog();
+                    cancelDialog.show(getFragmentManager(), "CancelDialog");
+                } else reAssignCar();
             }
         });
 
@@ -208,7 +223,6 @@ public class AssignationFragment extends Fragment {
 
                 switch (intent.getAction()) {
                     case DownloadService.DOWNLOAD_COMPLETED:
-                        //long numBytes = intent.getLongExtra(DownloadService.EXTRA_BYTES_DOWNLOADED, 0);
                         String picId = intent.getStringExtra(DownloadService.EXTRA_PICTURE_ID);
                         String downloadPath = intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH);
                         updateCircleImageViews(picId, downloadPath);
@@ -260,23 +274,31 @@ public class AssignationFragment extends Fragment {
         out.putParcelable(KEY_DOWNLOAD_URL, mDownloadUrl);
     }
 
+    /**
+     * When an image is clicked show a dialog.
+     */
     View.OnClickListener onImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.car_image_1:
-                    beginDownload(String.format(getResources().getString(R.string.filename_mainpic1), mCar.plate), "pic1Dialog");
+                    beginDownload(getResources().getString(R.string.filename_mainpic1), "pic1Dialog");
                     break;
                 case R.id.car_image_2:
-                    beginDownload(String.format(getResources().getString(R.string.filename_mainpic2), mCar.plate), "pic2Dialog");
+                    beginDownload(getResources().getString(R.string.filename_mainpic2), "pic2Dialog");
                     break;
                 case R.id.car_image_3:
-                    beginDownload(String.format(getResources().getString(R.string.filename_mainpic3), mCar.plate), "pic3Dialog");
+                    beginDownload(getResources().getString(R.string.filename_mainpic3), "pic3Dialog");
                     break;
             }
         }
     };
 
+    /**
+     * Load images gotten from FireBase.
+     * @param picId An id to know what image is.
+     * @param downloadPath Link of the image alocated in FireBase.
+     */
     public void updateCircleImageViews(String picId, String downloadPath) {
 
         switch (picId) {
@@ -302,13 +324,21 @@ public class AssignationFragment extends Fragment {
         }
     }
 
+    /**
+     * To download all images at the same time.
+     */
     public void downloadImages() {
 
-        beginDownload(String.format(getResources().getString(R.string.filename_mainpic1), mCar.plate), "pic1");
-        beginDownload(String.format(getResources().getString(R.string.filename_mainpic2), mCar.plate), "pic2");
-        beginDownload(String.format(getResources().getString(R.string.filename_mainpic3), mCar.plate), "pic3");
+        beginDownload(getResources().getString(R.string.filename_mainpic1), "pic1");
+        beginDownload(getResources().getString(R.string.filename_mainpic2), "pic2");
+        beginDownload(getResources().getString(R.string.filename_mainpic3), "pic3");
     }
 
+    /**
+     * Instantiate a service to get image link.
+     * @param fileName The name of the file.
+     * @param picId The image id.
+     */
     private void beginDownload(String fileName, String picId) {
         // Get path
         String path = String.format("pictures/cars/%1$s/%2$s/pictures/%3$s.jpg", mUser.adminUid, mCar.plate, fileName);
@@ -322,14 +352,6 @@ public class AssignationFragment extends Fragment {
 
         // Show loading spinner
         showProgressDialog();
-    }
-
-    private void showMessageDialog(String title, String message) {
-        AlertDialog ad = new AlertDialog.Builder(getContext())
-                .setTitle(title)
-                .setMessage(message)
-                .create();
-        ad.show();
     }
 
     private void showProgressDialog() {
@@ -369,6 +391,10 @@ public class AssignationFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * To display a dialog with an image.
+     * @param downloadPath The link to the image in FireBase.
+     */
     public void showImage(final String downloadPath) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -384,6 +410,10 @@ public class AssignationFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Logic to re-assign a car.
+     * Copy car assignment to car_history & user_history and then delete it.
+     */
     public void reAssignCar() {
 
         mDestinyDatabase = FirebaseDatabase.getInstance().getReference().child("car_history").child(mUser.adminUid).child(mCar.plate).child(mAssignment.start.toString());
@@ -393,8 +423,19 @@ public class AssignationFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                mDestinyDatabase.setValue(dataSnapshot.getValue());
-                mOtherDestinyDatabase.setValue(dataSnapshot.getValue());
+                Long end = System.currentTimeMillis();
+
+                AssignmentHistory assignmentCopy = dataSnapshot.getValue(AssignmentHistory.class);
+                assignmentCopy.end = end;
+                assignmentCopy.released = mIsAssigned;
+                mDestinyDatabase.setValue(assignmentCopy);
+
+                UserHistory userHistory = dataSnapshot.getValue(UserHistory.class);
+                userHistory.plate = mCar.plate;
+                userHistory.end = end;
+                userHistory.released = mIsAssigned;
+                mOtherDestinyDatabase.setValue(userHistory);
+
                 mOriginDatabase.removeValue();
                 updateUser();
             }
@@ -408,9 +449,12 @@ public class AssignationFragment extends Fragment {
         mOriginDatabase.addListenerForSingleValueEvent(reAssignCarListener);
     }
 
+    /**
+     * To delete the assignment connection from the user (Let assignment = "") when car re-assigned.
+     */
     private void updateUser() {
 
-        mUser.assignation = "";
+        mUser.assignment = "";
 
         mOriginDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(mUser.adminUid);
         Map<String, Object> postValues = mUser.toMap();
@@ -421,7 +465,50 @@ public class AssignationFragment extends Fragment {
         mOriginDatabase.updateChildren(childUpdates);
 
         getFragmentManager().popBackStack("MainFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        mListener.onFragmentInteraction("Reset");
         getFragmentManager().beginTransaction().replace(R.id.content_main, MainFragment.newInstance(), "MainFragment").commit();
+    }
+
+    /**
+     * Read assignment data (if exists).
+     */
+    public void readAssignment() {
+
+        mOriginDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment");
+        ValueEventListener reFuelListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Exterior object and use the values to update the UI
+
+                mAssignment = dataSnapshot.getValue(Assignment.class);
+
+                if (mAssignment.destination.length() > 0 && mAssignment.end > 0) {
+                    mIsAssigned = true;
+                    mButtonReasign.setText(getResources().getText(R.string.action_reasign));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Exterior failed, log a message
+                // Getting Exterior failed, log a message
+                Log.w("__load__", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mOriginDatabase.addListenerForSingleValueEvent(reFuelListener);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+
+        reAssignCar();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
+        dialog.getDialog().cancel();
     }
 
     /**

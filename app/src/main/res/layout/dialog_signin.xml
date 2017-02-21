@@ -15,7 +15,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:text="@string/reauth"/>
+        android:text="@string/reset_password"/>
     <EditText
         android:id="@+id/username_dialog"
         android:inputType="textEmailAddress"
@@ -25,16 +25,5 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="@string/prompt_email" />
-    <EditText
-        android:id="@+id/password_dialog"
-        android:inputType="textPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
-        android:hint="@string/profile_password"/>
+        android:hint="@string/prompt_mail" />
 </LinearLayout>

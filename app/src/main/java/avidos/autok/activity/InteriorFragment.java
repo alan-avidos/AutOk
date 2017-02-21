@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,13 +39,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
 import avidos.autok.R;
 import avidos.autok.entity.AC;
+import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.Interior;
@@ -74,6 +80,7 @@ public class InteriorFragment extends Fragment {
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
     private static final String ARG_ASSIGNMENT = "assignment";
+    private static final String ARG_ASSIGNED = "assigned";
 
     //
     private User mUser;
@@ -87,6 +94,9 @@ public class InteriorFragment extends Fragment {
     private Mat mMat;
     private Assignment mAssignment;
     private boolean mIsRatingModified = false;
+    private Boolean mIsAssigned;
+    File dir;
+    File file;
 
     // UI
     private TextView mCarInfoView;
@@ -135,12 +145,13 @@ public class InteriorFragment extends Fragment {
      * @return A new instance of fragment InteriorFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InteriorFragment newInstance(User user, Cars car, Assignment assignment) {
+    public static InteriorFragment newInstance(User user, Cars car, Assignment assignment, boolean isAssigned) {
         InteriorFragment fragment = new InteriorFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, car);
         args.putSerializable(ARG_USER, user);
         args.putSerializable(ARG_ASSIGNMENT, assignment);
+        args.putSerializable(ARG_ASSIGNED, isAssigned);
         fragment.setArguments(args);
         return fragment;
     }
@@ -152,6 +163,7 @@ public class InteriorFragment extends Fragment {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
             mAssignment = (Assignment) getArguments().getSerializable(ARG_ASSIGNMENT);
+            mIsAssigned = getArguments().getBoolean(ARG_ASSIGNED);
         }
     }
 
@@ -177,6 +189,23 @@ public class InteriorFragment extends Fragment {
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_interior_done);
         mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_interior_cancel);
 
+        if (mIsAssigned) {
+            mRatingBar.setEnabled(false);
+            //mCarImage.setEnabled(false);
+            //mWarningLightsImage.setEnabled(false);
+            //mSeatsImage.setEnabled(false);
+            //mACImage.setEnabled(false);
+            //mRadioImage.setEnabled(false);
+            //mMatImage.setEnabled(false);
+            mWarningLightsSwitch.setClickable(false);
+            mSeatsSwitch.setClickable(false);
+            mACSwitch.setClickable(false);
+            mRadioSwitch.setClickable(false);
+            mMatSwitch.setClickable(false);
+        }
+
+        readInteriorCheck();
+
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +225,7 @@ public class InteriorFragment extends Fragment {
         mRatingBar.setSeekPinByValue(0);
         mRatingBar.setOnRangeBarChangeListener(onRangeBarChangeListener);
         mCarInfoView.setText(getString(R.string.title_car_info, mCar.brand, mCar.model, mCar.plate));
+        mCarInfoView.setSelected(true);
 
         mWarningLightsSwitch.setOnCheckedChangeListener(onCheckedChangeListener);
         mSeatsSwitch.setOnCheckedChangeListener(onCheckedChangeListener);
@@ -209,7 +239,6 @@ public class InteriorFragment extends Fragment {
         mRadioImage.setOnClickListener(onImageClickListener);
         mMatImage.setOnClickListener(onImageClickListener);
 
-        readInteriorCheck();
         downloadImages();
         // Local broadcast receiver
         mBroadcastReceiver = new BroadcastReceiver() {
@@ -354,7 +383,7 @@ public class InteriorFragment extends Fragment {
                     }
                     break;
                 case R.id.car_image_interior:
-                        mFileName = String.format(getResources().getString(R.string.filename_mainpic2), mCar.plate);
+                        mFileName = getResources().getString(R.string.filename_mainpic2);
                     break;
                 default:
                     break;
@@ -453,7 +482,7 @@ public class InteriorFragment extends Fragment {
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_ac), mCar.plate) + ".jpg", "ac");
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_radio), mCar.plate) + ".jpg", "radio");
         beginDownload(String.format(historyPath + getResources().getString(R.string.filename_mat), mCar.plate) + ".jpg", "mat");
-        beginDownload(String.format(mainPath + getResources().getString(R.string.filename_mainpic2), mCar.plate) + ".jpg", "car");
+        beginDownload(mainPath + getResources().getString(R.string.filename_mainpic2) + ".jpg", "car");
     }
 
     public void deleteImage(String fileName) {
@@ -470,12 +499,14 @@ public class InteriorFragment extends Fragment {
     public void showImage(final String downloadPath, final String picId, final String path) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deleteImage(path);
-                setTagImages(picId);
-            }
-        });
+        if (!mIsAssigned) {
+            builder.setNegativeButton(R.string.action_delete, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    deleteImage(path);
+                    setTagImages(picId);
+                }
+            });
+        }
         final AlertDialog dialog = builder.create();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
@@ -599,7 +630,25 @@ public class InteriorFragment extends Fragment {
         if (requestCode == RC_TAKE_PICTURE) {
             if (resultCode == RESULT_OK) {
                 if (mFileUri != null) {
-                    uploadFromUri(mFileUri);
+
+                    Bitmap bMap= BitmapFactory.decodeFile(file.getAbsolutePath());
+                    Bitmap out = Bitmap.createScaledBitmap(bMap, 500, 500, false);
+                    File resizedFile = new File(dir, "resize.png");
+
+
+                    OutputStream fOut = null;
+                    try {
+                        fOut = new BufferedOutputStream(new FileOutputStream(resizedFile));
+                        out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                        fOut.flush();
+                        fOut.close();
+                        bMap.recycle();
+                        out.recycle();
+
+                    } catch (Exception e) {
+
+                    }
+                    uploadFromUri(Uri.fromFile(resizedFile));
                 } else {
                     Log.w(TAG, "File URI is null");
                 }
@@ -660,8 +709,8 @@ public class InteriorFragment extends Fragment {
         }
 
         // Choose file storage location, must be listed in res/xml/file_paths.xml
-        File dir = new File(Environment.getExternalStorageDirectory() + "/photos");
-        File file = new File(dir, UUID.randomUUID().toString() + ".jpg");
+        dir = new File(Environment.getExternalStorageDirectory() + "/photos");
+        file = new File(dir, UUID.randomUUID().toString() + ".jpg");
         try {
             // Create directory if it does not exist.
             if (!dir.exists()) {

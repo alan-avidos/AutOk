@@ -2,6 +2,7 @@ package avidos.autok.entity;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
  * Created by Alan on 11/4/2016.
  */
 
-public class FuelLoad {
+public class FuelLoad implements Serializable {
 
     public Long amount;
     public Double costPerLiter;

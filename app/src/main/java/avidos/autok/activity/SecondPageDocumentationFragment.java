@@ -1,10 +1,7 @@
 package avidos.autok.activity;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,16 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import avidos.autok.R;
-import avidos.autok.entity.AC;
 import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
-import avidos.autok.entity.Interior;
-import avidos.autok.entity.Mat;
-import avidos.autok.entity.Radio;
-import avidos.autok.entity.Seats;
 import avidos.autok.entity.User;
-import avidos.autok.entity.WarningLights;
-import avidos.autok.helper.OnPageCommunication;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,7 +47,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
 
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
-    private static final String ARG_ASSIGNMENT = "assignment";
+    private static final String ARG_ASSIGNED = "assigned";
     private static final String WHITESPACE = " ";
 
     private Cars mCar;
@@ -65,6 +55,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
     private Assignment mAssignment;
     private OnFragmentInteractionListener mListener;
     private Boolean fieldFilled = false;
+    private Boolean mIsAssigned;
     private String dateTime;
     // UI
     private EditText mDestinationView;
@@ -74,6 +65,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
     private EditText mExpirationView;
     private EditText mTelephoneView;
     private Button mFinishButton;
+    private Button mCancelButton;
     // FireBase
     private DatabaseReference mDatabase;
 
@@ -89,11 +81,12 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
      * @return A new instance of fragment FirstPageDocumentationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SecondPageDocumentationFragment newInstance(User user, Cars car) {
+    public static SecondPageDocumentationFragment newInstance(User user, Cars car, boolean isAssigned) {
         SecondPageDocumentationFragment fragment = new SecondPageDocumentationFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, car);
         args.putSerializable(ARG_USER, user);
+        args.putSerializable(ARG_ASSIGNED, isAssigned);
         fragment.setArguments(args);
         return fragment;
     }
@@ -104,6 +97,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         if (getArguments() != null) {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
+            mIsAssigned = getArguments().getBoolean(ARG_ASSIGNED);
         }
     }
 
@@ -120,6 +114,13 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
         mExpirationView = (EditText) view.findViewById(R.id.edittext_expiration);
         mTelephoneView = (EditText) view.findViewById(R.id.edittext_telephone);
         mFinishButton = (Button) view.findViewById(R.id.finish_button);
+        mCancelButton = (Button) view.findViewById(R.id.cancel_assignation_button);
+
+        if (mIsAssigned) {
+            mFinishButton.setVisibility(View.GONE);
+            mDestinationView.setFocusable(false);
+            mTimeOfUseView.setFocusable(false);
+        }
 
         readAssignment();
 
@@ -130,6 +131,7 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
 
         mTimeOfUseView.setOnClickListener(this);
         mFinishButton.setOnClickListener(this);
+        mCancelButton.setOnClickListener(this);
 
         return view;
     }
@@ -169,6 +171,10 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
                         Toast.makeText(getContext(), "No ha completado: " + mListener.getFragments(), Toast.LENGTH_LONG).show();
                     }
                 }
+                break;
+            case R.id.cancel_assignation_button:
+                getFragmentManager().popBackStack();
+                break;
             default:
                 break;
         }
@@ -273,7 +279,8 @@ public class SecondPageDocumentationFragment extends Fragment implements View.On
 
                 if (mAssignment.destination.length() > 0) {
                     mDestinationView.setText(mAssignment.destination);
-                } else if (mAssignment.end > 0) {
+                }
+                if (mAssignment.end > 0) {
                     mTimeOfUseView.setText(getDate(mAssignment.end));
                 }
 

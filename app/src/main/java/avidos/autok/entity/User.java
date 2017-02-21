@@ -22,13 +22,13 @@ public class User implements Serializable{
     public String password;
     public String telephone;
     public String email;
-    public String assignation;
+    public String assignment;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email, String assignation) {
+    public User(String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email, String assignment) {
         this.adminUid = adminUid;
         this.bloodType = bloodType;
         this.company = company;
@@ -37,7 +37,7 @@ public class User implements Serializable{
         this.password = password;
         this.telephone = telephone;
         this.email = email;
-        this.assignation = assignation;
+        this.assignment = assignment;
     }
 
     @Exclude
@@ -52,7 +52,7 @@ public class User implements Serializable{
         result.put("name", name);
         result.put("password", password);
         result.put("telephone", telephone);
-        result.put("assignation", assignation);
+        result.put("assignment", assignment);
         return result;
     }
 }

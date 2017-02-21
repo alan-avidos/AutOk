@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,8 +43,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +88,7 @@ public class ProfileFragment extends Fragment {
     private EditText mNameView;
     private EditText mUserView;
     private EditText mPhoneView;
-    private EditText mPasswordView;
+    private Button mResetPassword;
     private Button mButtonUpdate;
     private Button mButtonCancel;
     private CircleImageView mProfileImage;
@@ -94,11 +100,15 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference mDatabase;
     private DatabaseReference mUpdateDatabase;
     private FirebaseUser mUser;
+    private FirebaseAuth mAuth;
 
     private Uri mDownloadUrl = null;
     private Uri mFileUri = null;
+    File dir;
+    File file;
 
     private User user;
+
     private String adminUid;
 
     public ProfileFragment() {
@@ -133,8 +143,8 @@ public class ProfileFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
         mNameView = (EditText) view.findViewById(R.id.editText_name);
         mUserView = (EditText) view.findViewById(R.id.editText_user);
-        mPasswordView = (EditText) view.findViewById(R.id.editText_password);
         mPhoneView = (EditText) view.findViewById(R.id.editText_phone);
+        mResetPassword = (Button) view.findViewById(R.id.reset_button);
         mButtonUpdate = (Button) view.findViewById(R.id.update_button);
         mButtonCancel = (Button) view.findViewById(R.id.cancel_button);
         mProfileImage = (CircleImageView) view.findViewById(R.id.profile_image);
@@ -144,12 +154,18 @@ public class ProfileFragment extends Fragment {
             mDownloadUrl = savedInstanceState.getParcelable(KEY_DOWNLOAD_URL);
         }
 
+        mAuth = FirebaseAuth.getInstance();
+
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
+                    case R.id.reset_button:
+                        ChangePasswordDialog changePasswordDialog = new ChangePasswordDialog();
+                        changePasswordDialog.show(getFragmentManager(), "ChangePasswordDialog");
+                        break;
                     case R.id.update_button:
-                        updateUser(user.adminUid, user.bloodType, user.company, user.job, user.name, user.password, mPhoneView.getText().toString(), user.email, user.assignation);
+                        updateUser(user.adminUid, user.bloodType, user.company, user.job, user.name, user.password, mPhoneView.getText().toString(), user.email, user.assignment);
                         break;
                     case R.id.cancel_button:
                         mPhoneView.setText(user.telephone);
@@ -166,6 +182,7 @@ public class ProfileFragment extends Fragment {
         mButtonUpdate.setOnClickListener(onClickListener);
         mButtonCancel.setOnClickListener(onClickListener);
         mProfileImage.setOnClickListener(onClickListener);
+        mResetPassword.setOnClickListener(onClickListener);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -186,10 +203,10 @@ public class ProfileFragment extends Fragment {
 
                         break;
                     case DownloadService.DOWNLOAD_ERROR:
-                        // Alert failure
-                        showMessageDialog("Error", String.format(Locale.getDefault(),
+                        // Not Alert failure
+                        /*showMessageDialog("Error", String.format(Locale.getDefault(),
                                 "Failed to download from %s",
-                                intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH)));
+                                intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH)));*/
                         break;
                     case UploadService.UPLOAD_COMPLETED:
                         beginDownload();
@@ -225,10 +242,10 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    public void updateUser (String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email, String assignation) {
+    public void updateUser (String adminUid, String bloodType, String company, String job, String name, String password, String telephone, String email, String assignment) {
 
         mUpdateDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(this.adminUid);
-        User userValues = new User(adminUid, bloodType, company, job, name, password, telephone, email, assignation);
+        User userValues = new User(adminUid, bloodType, company, job, name, password, telephone, email, assignment);
         Map<String, Object> userMap = userValues.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -237,7 +254,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
-                    Toast.makeText(getContext(), "Número de telefono actualizado", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Número de teléfono actualizado", Toast.LENGTH_LONG).show();
                     mButtonUpdate.setEnabled(false);
                     mButtonUpdate.setEnabled(false);
                 }
@@ -296,7 +313,6 @@ public class ProfileFragment extends Fragment {
                 user = dataSnapshot.getValue(User.class);
                 mNameView.setText(user.name);
                 mUserView.setText(user.email);
-                mPasswordView.setText(user.password);
                 mPhoneView.setText(user.telephone);
                 mPhoneView.addTextChangedListener(textWatcher);
             }
@@ -366,8 +382,8 @@ public class ProfileFragment extends Fragment {
         }
 
         // Choose file storage location, must be listed in res/xml/file_paths.xml
-        File dir = new File(Environment.getExternalStorageDirectory() + "/photos");
-        File file = new File(dir, UUID.randomUUID().toString() + ".jpg");
+        dir = new File(Environment.getExternalStorageDirectory() + "/photos");
+        file = new File(dir, UUID.randomUUID().toString() + ".jpg");
         try {
             // Create directory if it does not exist.
             if (!dir.exists()) {
@@ -431,13 +447,29 @@ public class ProfileFragment extends Fragment {
         out.putParcelable(KEY_DOWNLOAD_URL, mDownloadUrl);
     }
 
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(LOAD_TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-
+        String newPath;
         if (resultCode == RESULT_OK) {
             if (requestCode == RC_TAKE_PICTURE) {
                 final boolean isCamera;
+
                 if (data == null) {
                     isCamera = true;
                 } else {
@@ -451,18 +483,37 @@ public class ProfileFragment extends Fragment {
 
                 Uri selectedImageUri;
                 if (isCamera) {
-                    selectedImageUri = mFileUri;
+
+                    newPath = file.getAbsolutePath();
+                    Bitmap bMap= BitmapFactory.decodeFile(newPath);
+                    Bitmap out = Bitmap.createScaledBitmap(bMap, 150, 150, false);
+                    File resizedFile = new File(dir, "resize.png");
+
+                    OutputStream fOut = null;
+                    try {
+                        fOut = new BufferedOutputStream(new FileOutputStream(resizedFile));
+                        out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                        fOut.flush();
+                        fOut.close();
+                        bMap.recycle();
+                        out.recycle();
+
+                    } catch (Exception e) { // TODO
+
+                    }
+
+                    uploadFromUri(Uri.fromFile(resizedFile));
                 } else {
                     selectedImageUri = data == null ? null : data.getData();
+                    uploadFromUri(selectedImageUri);
                 }
-                uploadFromUri(selectedImageUri);
             }
         }
     }
 
     private void beginDownload() {
         // Get path
-        String path = "pictures/" + mUser.getUid() + ".jpg";
+        String path = "pictures/users/" + mUser.getUid() + ".jpg";
 
         // Kick off DownloadService to download the file
         Intent intent = new Intent(getContext(), DownloadService.class)

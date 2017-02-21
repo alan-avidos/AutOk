@@ -38,12 +38,12 @@ import java.util.Map;
 
 import avidos.autok.R;
 import avidos.autok.adapter.AssignmentsAdapter;
-import avidos.autok.entity.Assignment;
 import avidos.autok.entity.Cars;
 import avidos.autok.entity.Check;
 import avidos.autok.entity.Exterior;
 import avidos.autok.entity.Interior;
 import avidos.autok.entity.User;
+import avidos.autok.entity.Assignment;
 import avidos.autok.helper.ItemClickSupport;
 
 /**
@@ -239,8 +239,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             mButtonNext.setTextColor(getResources().getColor(R.color.colorAppOrange));
             mButtonAvailable.setTextColor(getResources().getColor(R.color.colorAppWhiteText));
         }
-        if(mSelectionService != null && mSelectionType != null)
-            filterCars();
+        if(mSelectionService != null && mSelectionType != null) filterCars();
     }
 
     @Override
@@ -322,8 +321,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 // Get Post object and use the values to update the UI
 
                 mUserData = dataSnapshot.getValue(User.class);
-                if(mUserData.assignation.length() > 0) {
-                    getCar();
+                if(mUserData.assignment != null) {
+                    if(mUserData.assignment.length() > 0) {
+                        getCar();
+                    } else {
+                        hideProgressDialog();
+                    }
                 } else {
                     hideProgressDialog();
                 }
@@ -354,7 +357,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 assignmentList.clear();
                 if(mIsAvailableSelected) {
                     for (DataSnapshot carSnapshot: dataSnapshot.getChildren()) {
-                        if(!carSnapshot.child("assignment").exists()) {
+                        if(carSnapshot.child("assignment").exists()) {
+                            if(carSnapshot.child("assignment").child("userName").getValue(String.class).equals("")){
+                                Cars car = carSnapshot.child("generalInfo").getValue(Cars.class);
+                                carsList.add(car);
+                            }
+                        } else if(!carSnapshot.child("assignment").exists()) {
                             if(carSnapshot.child("generalInfo").child("allowedUse").child(mSelectionService).child(mSelectionType).getValue(boolean.class)) {
                                 Cars car = carSnapshot.child("generalInfo").getValue(Cars.class);
                                 carsList.add(car);
@@ -363,7 +371,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     }
                 } else {
                     for (DataSnapshot carSnapshot: dataSnapshot.getChildren()) {
-                        if(carSnapshot.child("assignment").exists()) {
+                        if(carSnapshot.child("assignment").exists() && carSnapshot.child("assignment").child("userName").getValue(String.class).length() > 0) {
                             if(carSnapshot.child("generalInfo").child("allowedUse").child(mSelectionService).child(mSelectionType).getValue(boolean.class)) {
                                 Cars car = carSnapshot.child("generalInfo").getValue(Cars.class);
                                 Assignment assignment = carSnapshot.child("assignment").getValue(Assignment.class);
@@ -388,7 +396,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private void getCar() {
 
         try {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignation).child("generalInfo");
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignment).child("generalInfo");
         } catch (NullPointerException npe) {
             return;
         }
@@ -415,7 +423,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private void getAssignment() {
 
         try {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignation).child("assignment");
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("cars").child(mUserData.adminUid).child(mUserData.assignment).child("assignment");
         } catch (NullPointerException npe) {
             return;
         }
@@ -450,7 +458,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
     private void updateUser(Cars car) {
 
-        mUserData.assignation = car.plate;
+        mUserData.assignment = car.plate;
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(mUserData.adminUid);
         Map<String, Object> postValues = mUserData.toMap();

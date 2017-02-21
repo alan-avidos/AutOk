@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
 import com.codetroopers.betterpickers.numberpicker.NumberPickerDialogFragment;
@@ -56,6 +57,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CAR = "car";
     private static final String ARG_USER = "user";
+    private static final String ARG_ASSIGNED = "assigned";
 
     private User mUser;
     private Cars mCar;
@@ -66,6 +68,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     private Locale locale;
     private boolean mIsOdometerModified = false;
     private boolean mIsFuelLevelModified = false;
+    private boolean mIsAssigned;
     // Fragment
     private OnFragmentInteractionListener mListener;
     // UI
@@ -100,11 +103,12 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
      * @return A new instance of fragment FuelFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FuelFragment newInstance(User user, Cars car) {
+    public static FuelFragment newInstance(User user, Cars car, boolean isAssigned) {
         FuelFragment fragment = new FuelFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_CAR, car);
         args.putSerializable(ARG_USER, user);
+        args.putSerializable(ARG_ASSIGNED, isAssigned);
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,6 +119,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         if (getArguments() != null) {
             mCar = (Cars) getArguments().getSerializable(ARG_CAR);
             mUser = (User) getArguments().getSerializable(ARG_USER);
+            mIsAssigned = getArguments().getBoolean(ARG_ASSIGNED);
         }
     }
 
@@ -158,25 +163,22 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         });
 
         mTextViewInfo.setText(getString(R.string.title_car_info, mCar.brand, mCar.model, mCar.plate));
+        mTextViewInfo.setSelected(true);
 
         readFuelOdometer();
         readLastReFuel();
 
+        if (mIsAssigned) {
+            mFuelLevel.setEnabled(false);
+            mImageViewDown.setEnabled(false);
+            mImageViewUp.setEnabled(false);
+            mKmPicker.setFocusable(false);
+        } else {
+            mKmPicker.setOnClickListener(onClickListener);
+        }
+
         mKilometers = BigInteger.ZERO;
 
-        mKmPicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NumberPickerBuilder npb = new NumberPickerBuilder()
-                        .setFragmentManager(getFragmentManager())
-                        .setTargetFragment(FuelFragment.this)
-                        .setStyleResId(R.style.BetterPickersDialogFragment)
-                        .setPlusMinusVisibility(View.INVISIBLE)
-                        .setDecimalVisibility(View.INVISIBLE)
-                        .setMaxNumber(BigDecimal.valueOf((long)999999));
-                npb.show();
-            }
-        });
 
         mFuelLevel.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
@@ -228,6 +230,16 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
                     mEditTextKm.setEnabled(true);
                     mEditTextLiters.setEnabled(true);
                     break;
+                case R.id.km_picker:
+                    NumberPickerBuilder npb = new NumberPickerBuilder()
+                            .setFragmentManager(getFragmentManager())
+                            .setTargetFragment(FuelFragment.this)
+                            .setStyleResId(R.style.BetterPickersDialogFragment)
+                            .setPlusMinusVisibility(View.INVISIBLE)
+                            .setDecimalVisibility(View.INVISIBLE)
+                            .setMaxNumber(BigDecimal.valueOf((long)999999));
+                    npb.show();
+                    break;
                 default:
                     break;
             }
@@ -239,8 +251,10 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.down_button:
-                    mKilometers = mKilometers.subtract(BigInteger.ONE);
-                    mTextViewKm.setText(NumberFormat.getNumberInstance(locale).format(mKilometers));
+                    if(!mKilometers.equals(BigInteger.ZERO)) {
+                        mKilometers = mKilometers.subtract(BigInteger.ONE);
+                        mTextViewKm.setText(NumberFormat.getNumberInstance(locale).format(mKilometers));
+                    }
                     break;
                 case R.id.up_button:
                     mKilometers = mKilometers.add(BigInteger.ONE);
@@ -414,6 +428,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     public void writeFuelLoad() {
         mDatabaseReFuel = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("fuelLoad").child(String.valueOf(System.currentTimeMillis()));
         mDatabaseReFuel.setValue(new FuelLoad(Long.valueOf(mEditTextLiters.getText().toString()), Double.valueOf(mEditTextCost.getText().toString()), Long.valueOf(mEditTextKm.getText().toString())));
+        Toast.makeText(getContext(), "Carga de combustible agregada", Toast.LENGTH_LONG).show();
     }
 
     public void writeFuelLevel(double fuelLevel) {
@@ -451,9 +466,13 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
 
     @Override
     public void onDialogNumberSet(int reference, BigInteger number, double decimal, boolean isNegative, BigDecimal fullNumber) {
-        mKilometers = number;
-        mTextViewKm.setText(NumberFormat.getNumberInstance(locale).format(mKilometers));
-        writeOdometer(Long.valueOf(mKilometers.toString()));
+        if(!isNegative) {
+            mKilometers = number;
+            mTextViewKm.setText(NumberFormat.getNumberInstance(locale).format(mKilometers));
+            writeOdometer(Long.valueOf(mKilometers.toString()));
+        } else {
+            Toast.makeText(getContext(), "Ingrese por favor un número positivo", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void getLocale() {

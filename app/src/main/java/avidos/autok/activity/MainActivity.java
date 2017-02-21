@@ -3,6 +3,7 @@ package avidos.autok.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,7 +23,8 @@ import avidos.autok.R;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, ExteriorFragment.OnFragmentInteractionListener,
         MainFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AssignationFragment.OnFragmentInteractionListener,
-        FuelFragment.OnFragmentInteractionListener, InteriorFragment.OnFragmentInteractionListener, SecondPageDocumentationFragment.OnFragmentInteractionListener {
+        FuelFragment.OnFragmentInteractionListener, InteriorFragment.OnFragmentInteractionListener, SecondPageDocumentationFragment.OnFragmentInteractionListener,
+        CancelDialog.CancelDialogListener, DocumentationFragment.OnFragmentInteractionListener {
 
     // Fragments
     private MainFragment mMainFragment;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
         }
     }
 
@@ -187,5 +189,16 @@ public class MainActivity extends AppCompatActivity
             fragments = fragments.concat("Combustible / Odómetro");
         }
         return fragments;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        AssignationFragment mAssignationFragment = (AssignationFragment) getSupportFragmentManager().findFragmentByTag("AssignationFragment");
+        mAssignationFragment.reAssignCar();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
     }
 }
