@@ -541,13 +541,16 @@ public class ExteriorFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            int visibility = isChecked ? View.VISIBLE : View.GONE;
             switch (buttonView.getId()){
                 case R.id.switch_crash:
                     mExterior.crash.accepted = isChecked;
+                    mCrashPic.setVisibility(visibility);
                     writeExteriorCheck();
                     break;
                 case R.id.switch_scratch:
                     mExterior.scratch.accepted = isChecked;
+                    mScratchPic.setVisibility(visibility);
                     writeExteriorCheck();
                     break;
                 default:

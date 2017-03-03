@@ -282,25 +282,31 @@ public class InteriorFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            int visibility = isChecked ? View.VISIBLE : View.GONE;
             switch (buttonView.getId()){
                 case R.id.switch_warning_lights:
                     mInterior.warningLights.accepted = isChecked;
+                    mWarningLightsImage.setVisibility(visibility);
                     writeInteriorCheck();
                     break;
                 case R.id.switch_seats:
                     mInterior.seats.accepted = isChecked;
+                    mSeatsImage.setVisibility(visibility);
                     writeInteriorCheck();
                     break;
                 case R.id.switch_ac:
                     mInterior.ac.accepted = isChecked;
+                    mACImage.setVisibility(visibility);
                     writeInteriorCheck();
                     break;
                 case R.id.switch_radio:
                     mInterior.radio.accepted = isChecked;
+                    mRadioImage.setVisibility(visibility);
                     writeInteriorCheck();
                     break;
                 case R.id.switch_mat:
                     mInterior.mat.accepted = isChecked;
+                    mMatImage.setVisibility(visibility);
                     writeInteriorCheck();
                     break;
                 default:

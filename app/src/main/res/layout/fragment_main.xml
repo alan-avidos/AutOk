@@ -1,86 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/select_vehicle_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_heightPercent="5%"
-        android:textColor="@color/colorAppWhiteText"
-        android:textSize="21sp"
+        android:layout_height="wrap_content"
         android:background="@color/colorAppOrange"
         android:gravity="center"
-        android:textStyle="bold"
-        android:text="@string/title_select_vehicle" />
+        android:text="@string/title_select_vehicle"
+        android:textColor="@color/colorAppWhiteText"
+        android:textSize="21sp"
+        android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/spinner_service"
-        android:layout_below="@id/select_vehicle_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_widthPercent="80%"
-        app:layout_heightPercent="8%"
-        app:layout_marginTopPercent="5%"
-        android:layout_centerHorizontal="true">
-    </Spinner>
-
-    <Spinner
-        android:id="@+id/spinner_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_widthPercent="80%"
-        app:layout_heightPercent="8%"
-        app:layout_marginTopPercent="5%"
-        android:layout_below="@+id/spinner_service"
-        android:layout_centerHorizontal="true">
-    </Spinner>
-
-    <Button
-        android:id="@+id/button_available"
-        android:layout_below="@id/spinner_type"
-        style="?android:textAppearanceSmall"
-        android:background="@drawable/tab_selected"
-        android:textColor="@color/colorAppOrange"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_marginTopPercent="5%"
-        app:layout_marginLeftPercent="10%"
-        app:layout_widthPercent="35%"
-        app:layout_heightPercent="9%"
-        android:text="@string/action_available"
-        android:textStyle="bold"/>
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
-    <Button
-        android:id="@+id/button_next"
-        style="?android:textAppearanceSmall"
-        android:background="@drawable/tab_unselected"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_marginTopPercent="5%"
-        app:layout_marginRightPercent="10%"
-        app:layout_widthPercent="35%"
-        app:layout_heightPercent="9%"
-        android:text="@string/action_next"
-        android:textStyle="bold"
-        android:layout_below="@+id/spinner_type"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="24dp"
-        android:layout_marginEnd="24dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/spinner_service"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"/>
+
+            <Spinner
+                android:id="@+id/spinner_type"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_available"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/tab_selected"
+                    android:text="@string/action_available"
+                    android:textColor="@color/colorAppOrange"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/button_next"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/tab_unselected"
+                    android:text="@string/action_next"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_assignments"
-        android:scrollbars="vertical"
-        app:layout_marginLeftPercent="10%"
-        app:layout_marginRightPercent="10%"
-        app:layout_marginTopPercent="5%"
-        android:layout_below="@id/button_available"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:scrollbars="vertical" />
 
-</android.support.percent.PercentRelativeLayout>
+</LinearLayout>

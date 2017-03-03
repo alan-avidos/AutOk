@@ -7,8 +7,8 @@ android {
         applicationId "avidos.autok"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 23
-        versionName "1.903"
+        versionCode 25
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

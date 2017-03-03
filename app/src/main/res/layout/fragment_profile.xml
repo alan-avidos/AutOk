@@ -1,153 +1,139 @@
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="avidos.autok.activity.ProfileFragment"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/profile_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_heightPercent="5%"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="center"
         android:textSize="21sp"
         android:textColor="@color/colorAppWhiteText"
         android:background="@color/colorAppOrange"
-        android:gravity="center"
         android:textStyle="bold"
         android:text="@string/title_profile" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
-        app:layout_marginTopPercent="2%"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_heightPercent="15%"
-        app:layout_widthPercent="20%"
-        android:src="@drawable/foto"
-        android:layout_below="@+id/profile_title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp" />
-
-    <LinearLayout
-        android:id="@+id/layout_form"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_marginTopPercent="2%"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:orientation="vertical"
-        android:layout_below="@+id/profile_image"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="13dp">
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
 
-        <TextView
-            android:id="@+id/name_text_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textColor="@color/colorAppOrange"
-            android:text="@string/profile_name" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:textSize="14sp"
-            android:theme="@style/EditTextHintBlack"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:id="@+id/editText_name" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/user_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textColor="@color/colorAppOrange"
-            android:text="@string/profile_username" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:src="@drawable/foto" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:textSize="14sp"
-            android:theme="@style/EditTextHintBlack"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:id="@+id/editText_user" />
+            <TextView
+                android:id="@+id/name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center_vertical"
+                android:text="@string/profile_name"
+                android:textColor="@color/colorAppOrange"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/phone_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textColor="@color/colorAppOrange"
-            android:text="@string/profile_phone" />
+            <EditText
+                android:id="@+id/editText_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="14sp"
+                android:theme="@style/EditTextHintBlack" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:textSize="14sp"
-            android:theme="@style/EditTextHintBlack"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:id="@+id/editText_phone"
-            android:inputType="phone" />
+            <TextView
+                android:id="@+id/user_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center_vertical"
+                android:text="@string/profile_username"
+                android:textColor="@color/colorAppOrange"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/editText_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="14sp"
+                android:theme="@style/EditTextHintBlack" />
 
-    <Button
-        android:id="@+id/reset_button"
-        style="?android:textAppearanceSmall"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_border_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        app:layout_widthPercent="75%"
-        app:layout_heightPercent="10%"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/action_reset_password"
-        android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/phone_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center_vertical"
+                android:text="@string/profile_phone"
+                android:textColor="@color/colorAppOrange"
+                android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/cancel_button"
-        style="?android:textAppearanceSmall"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_border"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_widthPercent="75%"
-        app:layout_heightPercent="10%"
-        android:layout_marginTop="10dp"
-        android:layout_above="@id/reset_button"
-        android:text="@string/action_cancel"
-        android:textStyle="bold"
-        android:enabled="false"/>
+            <EditText
+                android:id="@+id/editText_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="14sp"
+                android:theme="@style/EditTextHintBlack" />
 
-    <Button
-        android:id="@+id/update_button"
-        style="?android:textAppearanceSmall"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_border_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/cancel_button"
-        app:layout_widthPercent="75%"
-        app:layout_heightPercent="10%"
-        android:layout_marginTop="10dp"
-        android:text="@string/action_update"
-        android:textStyle="bold"
-        android:enabled="false"/>
+            <Button
+                android:id="@+id/reset_button"
+                style="?android:textAppearanceMedium"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/rounded_border_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_reset_password"
+                android:textStyle="bold"/>
 
-</android.support.percent.PercentRelativeLayout>
+            <Button
+                android:id="@+id/cancel_button"
+                style="?android:textAppearanceMedium"
+                android:background="@drawable/rounded_border"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/action_cancel"
+                android:textStyle="bold"
+                android:enabled="false"/>
+
+            <Button
+                android:id="@+id/update_button"
+                style="?android:textAppearanceMedium"
+                android:background="@drawable/rounded_border_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/action_update"
+                android:textStyle="bold"
+                android:enabled="false"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,16 +1,16 @@
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="avidos.autok.activity.AssignationFragment"
+    android:orientation="vertical"
     android:background="@drawable/background">
 
     <TextView
         android:id="@+id/new_asignation_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_heightPercent="5%"
+        android:layout_height="wrap_content"
         android:textColor="@color/colorAppWhiteText"
         android:textSize="19sp"
         android:background="@color/colorAppOrange"
@@ -18,94 +18,95 @@
         android:textStyle="bold"
         android:text="@string/title_new_assignation" />
 
-    <TextView
-        android:id="@+id/car_info"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_marginTopPercent="5%"
-        app:layout_heightPercent="8%"
-        android:maxLines="1"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit ="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:scrollHorizontally="true"
-        android:layout_below="@id/new_asignation_title"
-        android:textColor="@color/colorAppGrayText"
-        android:textSize="19sp"
-        android:gravity="center"
-        android:textStyle="bold" />
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/car_image_1"
-        app:layout_marginTopPercent="2%"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_heightPercent="15%"
-        app:layout_widthPercent="20%"
-        app:layout_marginLeftPercent="10%"
-        android:src="@drawable/foto"
-        android:layout_below="@+id/car_info"/>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/car_image_2"
-        app:layout_marginTopPercent="2%"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_heightPercent="15%"
-        app:layout_widthPercent="20%"
-        app:layout_marginLeftPercent="10%"
-        android:src="@drawable/foto"
-        android:layout_below="@+id/car_info"
-        android:layout_toEndOf="@+id/car_image_1"
-        android:layout_toRightOf="@id/car_image_1"/>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/car_image_3"
-        app:layout_marginTopPercent="2%"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_heightPercent="15%"
-        app:layout_widthPercent="20%"
-        app:layout_marginLeftPercent="10%"
-        android:src="@drawable/foto"
-        android:layout_below="@+id/car_info"
-        android:layout_toEndOf="@+id/car_image_2"
-        android:layout_toRightOf="@id/car_image_2"/>
-
-    <android.support.percent.PercentFrameLayout
-        android:id="@+id/reasign_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_widthPercent="75%"
-        app:layout_heightPercent="10%"
-        app:layout_marginTopPercent="5%"
-        app:layout_marginBottomPercent="5%"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="31dp" >
-
-        <Button
-            android:id="@+id/reasign_button"
-            style="?android:textAppearanceSmall"
-            android:background="@drawable/rounded_border_button"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/action_cancel"
-            android:textColor="@color/colorAppWhiteText"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
-    </android.support.percent.PercentFrameLayout>
+            <TextView
+                android:id="@+id/car_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:maxLines="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:textColor="@color/colorAppGrayText"
+                android:textSize="21sp"
+                android:gravity="center"
+                android:textStyle="bold" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_options"
-        android:scrollbars="vertical"
-        app:layout_marginLeftPercent="10%"
-        app:layout_marginRightPercent="10%"
-        app:layout_marginTopPercent="5%"
-        android:layout_below="@id/car_image_3"
-        android:layout_above="@id/reasign_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
 
-</android.support.percent.PercentRelativeLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/car_image_1"
+                    app:layout_marginTopPercent="2%"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:src="@drawable/foto" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/car_image_2"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:src="@drawable/foto" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/car_image_3"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:src="@drawable/foto" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_options"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:scrollbars="vertical"/>
+
+            <Button
+                android:id="@+id/reasign_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:background="@drawable/rounded_border_button"
+                android:text="@string/action_cancel"
+                android:textColor="@color/colorAppWhiteText"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

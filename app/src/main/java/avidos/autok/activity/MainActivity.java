@@ -23,7 +23,7 @@ import avidos.autok.R;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, ExteriorFragment.OnFragmentInteractionListener,
         MainFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AssignationFragment.OnFragmentInteractionListener,
-        FuelFragment.OnFragmentInteractionListener, InteriorFragment.OnFragmentInteractionListener, SecondPageDocumentationFragment.OnFragmentInteractionListener,
+        FuelFragment.OnFragmentInteractionListener, InteriorFragment.OnFragmentInteractionListener,
         CancelDialog.CancelDialogListener, DocumentationFragment.OnFragmentInteractionListener {
 
     // Fragments

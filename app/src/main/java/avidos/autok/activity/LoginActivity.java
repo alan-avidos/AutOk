@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -65,6 +66,9 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private DatabaseReference mDatabaseUserToAdmin;
+    private DatabaseReference mDatabaseUser;
+    private String adminUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    //isUserAdmin(user.getUid());
+                    //userToAdmin(user.getUid());
                     Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -265,24 +269,23 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void isUserAdmin(final String uid) {
+    private void userExists(final String uid) {
         try {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(uid);
+            mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("user");
         } catch (NullPointerException npe) {
             return;
         }
 
-        final ValueEventListener postListener = new ValueEventListener() {
+        final ValueEventListener userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if(dataSnapshot.exists()) {
+                if(dataSnapshot.child(adminUid).child(uid).exists()) {
                     Log.d(FIREBASE_AUTH_TAG, "onAuthStateChanged:signed_in:" + uid);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     LoginActivity.this.startActivity(intent);
                 } else {
-                    mEmailView.setError(getString(R.string.error_incorrect_user));
+                    mEmailView.setError(getString(R.string.error_incorrect_email));
                     mEmailView.requestFocus();
                 }
             }
@@ -293,6 +296,32 @@ public class LoginActivity extends AppCompatActivity {
                 Log.w("__tag__", "loadPost:onCancelled", databaseError.toException());
             }
         };
+
+        mDatabaseUser.addListenerForSingleValueEvent(userListener);
+    }
+
+    private void userToAdmin(final String uid) {
+        try {
+            mDatabaseUserToAdmin = FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(uid);
+        } catch (NullPointerException npe) {
+            return;
+        }
+
+        final ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                adminUid = dataSnapshot.child("adminUid").getValue(String.class);
+                userExists(uid);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("__tag__", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+
         mDatabase.addListenerForSingleValueEvent(postListener);
     }
 

@@ -88,7 +88,7 @@
 
     <string name="title_interior">Verificación interior</string>
     <string name="interior_warning">Tablero sin alarmas</string>
-    <string name="interior_seats">Asientos sin roturas</string>
+    <string name="interior_seats">¿Asientos rotos?</string>
     <string name="interior_ac">Aire acondicionado</string>
     <string name="interior_radio">Radio/Estéreo</string>
     <string name="interior_mat">Tapetes completos</string>
@@ -143,7 +143,7 @@
     <string-array name="type_array">
         <item>Tipo de uso</item>
         <item>Transportes de materiales</item>
-        <item>Personal</item>
+        <item>Diligencia</item>
         <item>Transporte de personal</item>
         <item>Renta</item>
     </string-array>

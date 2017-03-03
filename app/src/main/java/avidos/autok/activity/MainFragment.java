@@ -258,9 +258,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     if(mUserData == null) {
                         readUserData();
                     } else {
-                        if(mSelectionService.equals(getResources().getStringArray(R.array.service_array_en)[0]))
-                            if(mSelectionType.equals(getResources().getStringArray(R.array.type_array_en)[0]))
-                                return;
+                        if(mSelectionService.equals(getResources().getStringArray(R.array.service_array_en)[0]) ||
+                                mSelectionType.equals(getResources().getStringArray(R.array.type_array_en)[0]))
+                                    return;
                         filterCars();
                         mAdapter.notifyDataSetChanged();
                     }

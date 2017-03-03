@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         app:layout_heightPercent="5%"
         android:textColor="@color/colorAppWhiteText"
-        android:textSize="19sp"
+        android:textSize="19dp"
         android:background="@color/colorAppOrange"
         android:gravity="center"
         android:textStyle="bold"
@@ -31,7 +31,7 @@
         android:focusableInTouchMode="true"
         android:scrollHorizontally="true"
         android:textColor="@color/colorAppGrayText"
-        android:textSize="19sp"
+        android:textSize="19dp"
         android:gravity="center"
         android:textStyle="bold"
         android:layout_below="@+id/exterior_title"
@@ -59,7 +59,7 @@
         android:layout_below="@id/car_image_exterior"
         android:textColor="@color/colorAppGrayText"
         android:text="Limpieza exterior"
-        android:textSize="21sp"
+        android:textSize="21dp"
         android:gravity="center"
         android:textStyle="bold" />
 
@@ -214,7 +214,7 @@
                     android:paddingStart="30dp"
                     android:paddingRight="30dp"
                     android:textColor="@color/colorAppWhiteText"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     android:gravity="center_vertical"
                     android:textStyle="bold"
                     android:text="@string/exterior_crash"/>
@@ -227,6 +227,7 @@
                     app:layout_marginRightPercent="5%"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:visibility="gone"
                     android:src="@drawable/foto" />
 
                 <com.kyleduo.switchbutton.SwitchButton
@@ -242,7 +243,7 @@
                     app:layout_marginRightPercent="5%"
                     android:gravity="center"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     app:kswTextOff="No"
                     app:kswTextOn="Si"
                     />
@@ -266,7 +267,7 @@
                     android:paddingStart="30dp"
                     android:paddingRight="30dp"
                     android:textColor="@color/colorAppWhiteText"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     android:gravity="center_vertical"
                     android:textStyle="bold"
                     android:text="@string/exterior_scratch"/>
@@ -279,6 +280,7 @@
                     app:layout_marginRightPercent="5%"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:visibility="gone"
                     android:src="@drawable/foto" />
 
                 <com.kyleduo.switchbutton.SwitchButton
@@ -294,7 +296,7 @@
                     app:layout_marginRightPercent="5%"
                     android:gravity="center"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     app:kswTextOff="No"
                     app:kswTextOn="Si"
                     />
