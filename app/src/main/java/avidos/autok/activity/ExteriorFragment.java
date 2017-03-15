@@ -210,7 +210,8 @@ public class ExteriorFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                if(imagesUploaded()) getFragmentManager().popBackStack();
+                else Toast.makeText(getContext(), "Faltan imagenes por subir.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -541,7 +542,7 @@ public class ExteriorFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            int visibility = isChecked ? View.VISIBLE : View.GONE;
+            int visibility = isChecked ? View.VISIBLE : View.INVISIBLE;
             switch (buttonView.getId()){
                 case R.id.switch_crash:
                     mExterior.crash.accepted = isChecked;
@@ -728,10 +729,46 @@ public class ExteriorFragment extends Fragment {
             case "rightPic":
                 mExterior.pic4 = String.format(getResources().getString(R.string.filename_rightpic), mCar.plate);
                 break;
+            case "crashPic":
+                mExterior.crash.pic = String.format(getResources().getString(R.string.filename_crashpic), mCar.plate);
+                break;
+            case "scratchPic":
+                mExterior.scratch.pic = String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate);
+                break;
         }
 
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("exterior");
         mDatabaseCheck.setValue(mExterior);
+    }
+
+    /**
+     *
+     * @return boolean, if the images where uploaded
+     */
+
+    private boolean imagesUploaded() {
+
+        if(mCrashSwitch.isChecked()) {
+            if(mCrashPic.getTag() != null) {
+                if (!mCrashPic.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if(mScratchSwitch.isChecked()) {
+            if(mScratchPic.getTag() != null) {
+                if (!mScratchPic.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -750,7 +787,7 @@ public class ExteriorFragment extends Fragment {
 
                 if (mExterior == null) {
 
-                    mCrash = new Crash(false,
+                    /*mCrash = new Crash(false,
                             String.format(getResources().getString(R.string.filename_crashpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_crashpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_crashpic), mCar.plate));
@@ -758,7 +795,13 @@ public class ExteriorFragment extends Fragment {
                     mScratch = new Scratch(false,
                             String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate),
                             String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));
+                            String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));*/
+
+                    mCrash = new Crash(false,
+                            null);
+
+                    mScratch = new Scratch(false,
+                            null);
 
                     mExterior = new Exterior(null,
                             null,

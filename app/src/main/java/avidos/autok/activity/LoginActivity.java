@@ -276,7 +276,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        final ValueEventListener userListener = new ValueEventListener() {
+        ValueEventListener userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(adminUid).child(uid).exists()) {
@@ -302,16 +302,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void userToAdmin(final String uid) {
         try {
-            mDatabaseUserToAdmin = FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(uid);
+            FirebaseDatabase.getInstance().getReference().child("userToAdmin").child(uid).child("adminUid");
         } catch (NullPointerException npe) {
             return;
         }
 
-        final ValueEventListener postListener = new ValueEventListener() {
+        ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                adminUid = dataSnapshot.child("adminUid").getValue(String.class);
+                adminUid = dataSnapshot.getValue(String.class);
                 userExists(uid);
             }
 

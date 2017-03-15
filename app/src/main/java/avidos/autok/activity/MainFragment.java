@@ -239,7 +239,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             mButtonNext.setTextColor(getResources().getColor(R.color.colorAppOrange));
             mButtonAvailable.setTextColor(getResources().getColor(R.color.colorAppWhiteText));
         }
-        if(mSelectionService != null && mSelectionType != null) filterCars();
+
+        if(mSelectionService != null && mSelectionType != null) {
+            if(!mSelectionService.equals(getResources().getStringArray(R.array.service_array_en)[0]) ||
+                    !mSelectionType.equals(getResources().getStringArray(R.array.type_array_en)[0])) {
+                filterCars();
+            }
+
+        }
     }
 
     @Override

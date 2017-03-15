@@ -209,7 +209,8 @@ public class InteriorFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                if(imagesUploaded()) getFragmentManager().popBackStack();
+                else Toast.makeText(getContext(), "Faltan imagenes por subir.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -226,6 +227,7 @@ public class InteriorFragment extends Fragment {
         mRatingBar.setOnRangeBarChangeListener(onRangeBarChangeListener);
         mCarInfoView.setText(getString(R.string.title_car_info, mCar.brand, mCar.model, mCar.plate));
         mCarInfoView.setSelected(true);
+        mCarInfoView.requestFocus();
 
         mWarningLightsSwitch.setOnCheckedChangeListener(onCheckedChangeListener);
         mSeatsSwitch.setOnCheckedChangeListener(onCheckedChangeListener);
@@ -254,7 +256,7 @@ public class InteriorFragment extends Fragment {
                         String picId = intent.getStringExtra(DownloadService.EXTRA_PICTURE_ID);
                         String downloadPath = intent.getStringExtra(DownloadService.EXTRA_DOWNLOAD_PATH);
                         updateCircleImageViews(picId, downloadPath);
-
+                        writeInteriorImage(picId);
                         break;
                     case DownloadService.DOWNLOAD_ERROR:
                         // Alert failure
@@ -282,7 +284,7 @@ public class InteriorFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            int visibility = isChecked ? View.VISIBLE : View.GONE;
+            int visibility = isChecked ? View.VISIBLE : View.INVISIBLE;
             switch (buttonView.getId()){
                 case R.id.switch_warning_lights:
                     mInterior.warningLights.accepted = isChecked;
@@ -502,6 +504,61 @@ public class InteriorFragment extends Fragment {
         showProgressDialog();
     }
 
+    private boolean imagesUploaded() {
+
+        if(mWarningLightsSwitch.isChecked()) {
+            if(mWarningLightsImage.getTag() != null) {
+                if (!mWarningLightsImage.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if(mRadioSwitch.isChecked()) {
+            if(mRadioImage.getTag() != null) {
+                if (!mRadioImage.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if(mACSwitch.isChecked()) {
+            if(mACImage.getTag() != null) {
+                if (!mACImage.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if(mSeatsSwitch.isChecked()) {
+            if(mSeatsImage.getTag() != null) {
+                if (!mSeatsImage.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if(mMatSwitch.isChecked()) {
+            if(mMatImage.getTag() != null) {
+                if (!mMatImage.getTag().equals(true)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public void showImage(final String downloadPath, final String picId, final String path) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -524,6 +581,34 @@ public class InteriorFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Write assignment exterior check on FireBase.
+     */
+    public void writeInteriorImage(String picId) {
+
+        switch (picId) {
+
+            case "warningLights":
+                mInterior.warningLights.pic = String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate);
+                break;
+            case "seats":
+                mInterior.seats.pic = String.format(getResources().getString(R.string.filename_seats), mCar.plate);
+                break;
+            case "radio":
+                mInterior.radio.pic = String.format(getResources().getString(R.string.filename_radio), mCar.plate);
+                break;
+            case "ac":
+                mInterior.ac.pic = String.format(getResources().getString(R.string.filename_ac), mCar.plate);
+                break;
+            case "mat":
+                mInterior.mat.pic = String.format(getResources().getString(R.string.filename_mat), mCar.plate);
+                break;
+        }
+
+        mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("interior");
+        mDatabaseCheck.setValue(mInterior);
+    }
+
     public void writeInteriorCheck() {
         mDatabaseCheck = FirebaseDatabase.getInstance().getReference().child("cars").child(mUser.adminUid).child(mCar.plate).child("assignment").child("check").child("interior");
         mDatabaseCheck.setValue(mInterior);
@@ -542,7 +627,7 @@ public class InteriorFragment extends Fragment {
 
                 if (mInterior == null) {
 
-                    mWarningLights = new WarningLights(false,
+/*                    mWarningLights = new WarningLights(false,
                             String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate),
                             String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate),
                             String.format(getResources().getString(R.string.filename_warning_lights), mCar.plate));
@@ -565,7 +650,22 @@ public class InteriorFragment extends Fragment {
                     mMat = new Mat(false,
                             String.format(getResources().getString(R.string.filename_mat), mCar.plate),
                             String.format(getResources().getString(R.string.filename_mat), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_mat), mCar.plate));
+                            String.format(getResources().getString(R.string.filename_mat), mCar.plate));*/
+
+                    mWarningLights = new WarningLights(false,
+                            null);
+
+                    mSeats = new Seats(false,
+                            null);
+
+                    mRadio = new Radio(false,
+                            null);
+
+                    mAC = new AC(false,
+                            null);
+
+                    mMat = new Mat(false,
+                            null);
 
 
                     mInterior = new Interior(0L, mWarningLights, mSeats, mAC, mRadio, mMat);

@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +73,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     // Fragment
     private OnFragmentInteractionListener mListener;
     // UI
-    private RelativeLayout mKmPicker;
+    private LinearLayout mKmPicker;
     private TextView mTextViewKm;
     private TextView mTextViewInfo;
     private ImageView mImageViewUp;
@@ -85,7 +86,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
     private Button mSaveButton;
     private FloatingActionButton mDoneButton;
     private FloatingActionButton mCancelButton;
-    private PercentRelativeLayout mSeekBarLayout;
+    private LinearLayout mSeekBarLayout;
 
 
     // FireBase
@@ -131,7 +132,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
 
         getLocale();
 
-        mKmPicker = (RelativeLayout) view.findViewById(R.id.km_picker);
+        mKmPicker = (LinearLayout) view.findViewById(R.id.km_picker);
         mTextViewKm = (TextView) view.findViewById(R.id.text_kilometers);
         mTextViewInfo = (TextView) view.findViewById(R.id.car_info_fuel);
         mImageViewDown = (ImageView) view.findViewById(R.id.down_button);
@@ -144,7 +145,7 @@ public class FuelFragment extends Fragment implements NumberPickerDialogFragment
         mReFuelButton = (Button) view.findViewById(R.id.refuel_button);
         mDoneButton = (FloatingActionButton) view.findViewById(R.id.fab_fuel_done);
         mCancelButton = (FloatingActionButton) view.findViewById(R.id.fab_fuel_cancel);
-        mSeekBarLayout = (PercentRelativeLayout) view.findViewById(R.id.seekbar_layout);
+        mSeekBarLayout = (LinearLayout) view.findViewById(R.id.seekbar_layout);
 
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity
     private boolean isACarAssigned = false;
     private boolean [] mFragmentInteraction = {false, false, false};
 
+    /*
+
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

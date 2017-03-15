@@ -9,18 +9,14 @@ import java.io.Serializable;
 public class Crash implements Serializable {
 
     public boolean accepted;
-    public String pic1;
-    public String pic2;
-    public String pic3;
+    public String pic;
 
     public Crash() {
         // Default constructor required for calls to DataSnapshot.getValue(Crash.class)
     }
 
-    public Crash(boolean accepted, String pic1, String pic2, String pic3) {
+    public Crash(boolean accepted, String pic) {
         this.accepted = accepted;
-        this.pic1 = pic1;
-        this.pic2 = pic2;
-        this.pic3 = pic3;
+        this.pic = pic;
     }
 }

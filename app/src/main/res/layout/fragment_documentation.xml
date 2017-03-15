@@ -1,17 +1,18 @@
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="avidos.autok.activity.DocumentationFragment">
+    tools:context="avidos.autok.activity.DocumentationFragment"
+    android:orientation="vertical"
+    android:background="@drawable/background">
 
     <TextView
         android:id="@+id/documentation_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_heightPercent="5%"
+        android:layout_height="wrap_content"
         android:textColor="@color/colorAppWhiteText"
-        android:textSize="19dp"
+        android:textSize="19sp"
         android:background="@color/colorAppOrange"
         android:gravity="center"
         android:textStyle="bold"
@@ -19,22 +20,22 @@
 
     <ScrollView
         android:id="@+id/scroll"
-        android:layout_below="@+id/documentation_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background">
+            android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:theme="@style/EditTextHintBlack">
 
                 <EditText
@@ -42,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -57,9 +58,7 @@
                 android:id="@+id/layout_timeofuse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:theme="@style/EditTextHintBlack"
-                android:layout_below="@id/layout_destination">
+                android:theme="@style/EditTextHintBlack">
 
                 <EditText
                     android:id="@+id/edittext_timeofuse"
@@ -68,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:focusable="false"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textIsSelectable="false"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
@@ -82,15 +81,14 @@
             <FrameLayout
                 android:id="@+id/vehicle_subtitle_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layout_timeofuse">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/vehicle_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorAppGrayText"
-                    android:textSize="24dp"
+                    android:textSize="24sp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textStyle="bold"
@@ -110,10 +108,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_brand"
-                android:layout_below="@+id/vehicle_subtitle_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -124,7 +120,7 @@
                     android:layout_centerHorizontal="true"
                     android:clickable="false"
                     android:focusable="false"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -135,10 +131,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_subbrand"
-                android:layout_below="@+id/layout_brand"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -148,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -162,10 +156,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_type"
-                android:layout_below="@+id/layout_subbrand"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -175,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -189,10 +181,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_model"
-                android:layout_below="@+id/layout_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -201,7 +191,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -216,10 +206,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_color"
-                android:layout_below="@+id/layout_model"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -229,7 +217,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -243,10 +231,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_plate"
-                android:layout_below="@+id/layout_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -256,7 +242,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -271,15 +257,14 @@
             <FrameLayout
                 android:id="@+id/possession_subtitle_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layout_plate">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/possession_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorAppGrayText"
-                    android:textSize="24dp"
+                    android:textSize="24sp"
                     android:gravity="center_horizontal|top"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
@@ -299,10 +284,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_user"
-                android:layout_below="@+id/possession_subtitle_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -312,7 +295,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -326,10 +309,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_datetime"
-                android:layout_below="@+id/layout_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -342,7 +323,7 @@
                     android:textIsSelectable="false"
                     android:clickable="false"
                     android:focusable="false"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -354,15 +335,14 @@
             <FrameLayout
                 android:id="@+id/assurance_subtitle_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layout_datetime">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/assurance_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorAppGrayText"
-                    android:textSize="24dp"
+                    android:textSize="24sp"
                     android:gravity="center_horizontal|top"
                     android:textStyle="bold"
                     android:text="@string/subtitle_assurance"
@@ -384,8 +364,6 @@
                 android:id="@+id/layout_assurance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/assurance_subtitle_layout"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -396,7 +374,7 @@
                     android:layout_height="wrap_content"
                     app:layout_marginTopPercent="5%"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -413,8 +391,6 @@
                 android:id="@+id/layout_policenumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layout_assurance"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -441,8 +417,6 @@
                 android:id="@+id/layout_expiration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layout_policenumber"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -452,7 +426,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="21dp"
+                    android:textSize="21sp"
                     android:textStyle="bold"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -468,8 +442,6 @@
                 android:id="@+id/layout_telephone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layout_expiration"
-                android:layout_centerHorizontal="true"
                 android:theme="@style/EditTextHintBlack"
                 android:visibility="gone">
 
@@ -495,31 +467,26 @@
             <Button
                 android:id="@+id/cancel_assignation_button"
                 style="?android:textAppearanceSmall"
-                android:layout_centerHorizontal="true"
                 android:background="@drawable/rounded_border_button"
-                android:layout_width="400dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:layout_below="@id/layout_telephone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:text="@string/action_cancel"
                 android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/finish_button"
                 style="?android:textAppearanceSmall"
-                android:layout_centerHorizontal="true"
                 android:background="@drawable/rounded_border_button"
-                android:layout_width="400dp"
-                android:layout_height="50dp"
-                android:layout_below="@id/cancel_assignation_button"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:text="@string/action_finish"
                 android:textStyle="bold"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 
-</android.support.percent.PercentRelativeLayout>
+</LinearLayout>
