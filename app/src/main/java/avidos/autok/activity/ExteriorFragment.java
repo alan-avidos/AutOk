@@ -787,16 +787,6 @@ public class ExteriorFragment extends Fragment {
 
                 if (mExterior == null) {
 
-                    /*mCrash = new Crash(false,
-                            String.format(getResources().getString(R.string.filename_crashpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_crashpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_crashpic), mCar.plate));
-
-                    mScratch = new Scratch(false,
-                            String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_scratchpic), mCar.plate));*/
-
                     mCrash = new Crash(false,
                             null);
 
@@ -811,13 +801,6 @@ public class ExteriorFragment extends Fragment {
                             mCrash,
                             mScratch);
 
-/*                    mExterior = new Exterior(String.format(getResources().getString(R.string.filename_frontpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_rearpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_leftpic), mCar.plate),
-                            String.format(getResources().getString(R.string.filename_rightpic), mCar.plate),
-                            0L,
-                            mCrash,
-                            mScratch);*/
                 } else {
                     mScratchSwitch.setChecked(mExterior.scratch.accepted);
                     mCrashSwitch.setChecked(mExterior.crash.accepted);
